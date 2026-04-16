@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       error_url: errorUrl || `${appUrl}/payment/error?order=${orderId}`,
       back_url: backUrl || `${appUrl}/checkout`,
       notification_url: `${appUrl}/api/tupay/webhook`,
-      test: isStaging,
+      test: false,
       mobile: false,
       request_payer_data_on_validation_failure: false,
     };
