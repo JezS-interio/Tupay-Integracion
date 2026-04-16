@@ -1,20 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-
-// Initialize Firebase Admin (server-side only)
-function getAdminDb() {
-  if (!getApps().length) {
-    initializeApp({
-      credential: cert({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
-    });
-  }
-  return getFirestore();
-}
+import crypto from 'crypto';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,17 +7,18 @@ export async function POST(request: NextRequest) {
     const { deposit_id } = body;
 
     if (!deposit_id) {
-      return NextResponse.json({ error: 'Missing deposit_id' }, { status: 400 });
+      return NextResponse.json({ received: true });
     }
 
-    // Query TuPay for current deposit status
     const apiKey = process.env.TUPAY_API_KEY!;
     const apiSignature = process.env.TUPAY_API_SIGNATURE!;
     const baseUrl = process.env.TUPAY_BASE_URL!;
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!;
+    const firebaseApiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY!;
 
+    // Query TuPay for current deposit status
     const xDate = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
-    const { createHmac } = await import('crypto');
-    const hmac = createHmac('sha256', apiSignature);
+    const hmac = crypto.createHmac('sha256', apiSignature);
     hmac.update(xDate + apiKey);
     const authHash = hmac.digest('hex');
 
@@ -47,7 +33,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!statusResponse.ok) {
-      console.error('TuPay status check failed:', deposit_id);
+      console.error('TuPay status check failed for deposit:', deposit_id);
       return NextResponse.json({ received: true });
     }
 
@@ -72,29 +58,32 @@ export async function POST(request: NextRequest) {
     const newPaymentStatus = paymentStatusMap[status] || 'pending';
     const newOrderStatus = status === 'COMPLETED' ? 'processing' : undefined;
 
-    // Update Firestore order
-    try {
-      const db = getAdminDb();
-      const orderRef = db.collection('orders').doc(invoice_id);
-      const updateData: Record<string, string> = {
-        paymentStatus: newPaymentStatus,
-        updatedAt: new Date().toISOString(),
-        tupayDepositId: String(deposit_id),
-        tupayStatus: status,
-      };
-      if (newOrderStatus) {
-        updateData.orderStatus = newOrderStatus;
-      }
-      await orderRef.update(updateData);
-    } catch (dbError) {
-      console.error('Firestore update error:', dbError);
-      // Return 200 so TuPay doesn't retry infinitely; log for manual fix
+    // Update Firestore via REST API (no firebase-admin needed)
+    const updateData: Record<string, unknown> = {
+      fields: {
+        paymentStatus: { stringValue: newPaymentStatus },
+        updatedAt: { stringValue: new Date().toISOString() },
+        tupayDepositId: { stringValue: String(deposit_id) },
+        tupayStatus: { stringValue: status },
+        ...(newOrderStatus ? { orderStatus: { stringValue: newOrderStatus } } : {}),
+      },
+    };
+
+    const firestoreUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/orders/${invoice_id}?updateMask.fieldPaths=paymentStatus&updateMask.fieldPaths=updatedAt&updateMask.fieldPaths=tupayDepositId&updateMask.fieldPaths=tupayStatus${newOrderStatus ? '&updateMask.fieldPaths=orderStatus' : ''}&key=${firebaseApiKey}`;
+
+    const firestoreRes = await fetch(firestoreUrl, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updateData),
+    });
+
+    if (!firestoreRes.ok) {
+      console.error('Firestore update failed:', await firestoreRes.text());
     }
 
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error('TuPay webhook error:', error);
-    // Return 200 to avoid TuPay retries on parsing errors
     return NextResponse.json({ received: true });
   }
 }
