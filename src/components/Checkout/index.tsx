@@ -23,6 +23,9 @@ const Pagar = () => {
   const cartItems = useSelector(selectCartItems);
   const cartTotal = useSelector(selectTotalPrice);
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("tupay");
+  const [payerDocument, setPayerDocument] = useState("");
+  const [documentType, setDocumentType] = useState("DNI");
   const shippingFee = 15.0;
   const tax = cartTotal * 0.1; // 10% tax
   const total = cartTotal + shippingFee + tax;
@@ -41,6 +44,11 @@ const Pagar = () => {
       return;
     }
 
+    if (paymentMethod === "tupay" && !payerDocument.trim()) {
+      toast.error("Ingresa tu número de documento para pagar con TuPay");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -55,7 +63,7 @@ const Pagar = () => {
         city: formData.get('town') as string || '',
         state: formData.get('country') as string || '',
         zipCode: '',
-        country: formData.get('countryName') as string || 'USA',
+        country: formData.get('countryName') as string || 'PE',
       };
 
       // Prepare order items
@@ -81,10 +89,55 @@ const Pagar = () => {
         shippingAddress,
         orderStatus: 'pending',
         paymentStatus: 'pending',
-        paymentMethod: 'Cash on Delivery', // Default for now
+        paymentMethod: paymentMethod === 'tupay' ? 'TuPay' : 'Cash on Delivery',
         notes: formData.get('notes') as string || '',
       });
 
+      // Delete abandoned cart record
+      if (user.email) {
+        await deleteAbandonedCart(user.email);
+      }
+
+      if (paymentMethod === 'tupay') {
+        // Call TuPay API
+        const nameParts = shippingAddress.fullName.trim().split(' ');
+        const firstName = nameParts[0] || 'Cliente';
+        const lastName = nameParts.slice(1).join(' ') || 'Cliente';
+
+        const tupayRes = await fetch('/api/tupay/create-deposit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId,
+            amount: total.toFixed(2),
+            currency: 'PEN',
+            firstName,
+            lastName,
+            email: shippingAddress.email,
+            document: payerDocument.trim(),
+            documentType,
+            phone: shippingAddress.phone || undefined,
+          }),
+        });
+
+        const tupayData = await tupayRes.json();
+
+        if (!tupayRes.ok || !tupayData.redirect_url) {
+          console.error('TuPay error:', tupayData);
+          toast.error(tupayData.error || 'Error al iniciar el pago con TuPay. Intenta de nuevo.');
+          setLoading(false);
+          return;
+        }
+
+        // Clear cart before redirecting
+        dispatch(removeAllItemsFromCart());
+
+        // Redirect to TuPay payment page
+        window.location.href = tupayData.redirect_url;
+        return;
+      }
+
+      // Cash on delivery flow
       // Send order confirmation email
       const emailResponse = await fetch('/api/send-order-confirmation', {
         method: 'POST',
@@ -109,24 +162,14 @@ const Pagar = () => {
 
       if (!emailResponse.ok) {
         console.error('Failed to send order confirmation email');
-        // Don't block checkout if email fails
       }
 
-      // Delete abandoned cart record
-      if (user.email) {
-        await deleteAbandonedCart(user.email);
-      }
-
-      // Clear cart
       dispatch(removeAllItemsFromCart());
-
-      toast.success(`Order #${orderId} placed successfully! Check your email for confirmation.`);
-
-      // Redirect to home
+      toast.success(`Pedido #${orderId} realizado con éxito. ¡Revisa tu correo!`);
       router.push('/');
     } catch (error) {
       console.error('Pagar error:', error);
-      toast.error('Failed to process order. Please try again.');
+      toast.error('No se pudo procesar el pedido. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -256,7 +299,14 @@ const Pagar = () => {
                 <ShippingMethod />
 
                 {/* <!-- payment box --> */}
-                <PaymentMethod />
+                <PaymentMethod
+                  selectedPayment={paymentMethod}
+                  onPaymentChange={setPaymentMethod}
+                  document={payerDocument}
+                  onDocumentChange={setPayerDocument}
+                  documentType={documentType}
+                  onDocumentTypeChange={setDocumentType}
+                />
 
                 {/* <!-- checkout button --> */}
                 <button
@@ -264,7 +314,15 @@ const Pagar = () => {
                   disabled={loading || cartItems.length === 0 || !user}
                   className="w-full flex justify-center font-medium text-white bg-blue py-3 px-6 rounded-md ease-out duration-200 hover:bg-blue-dark mt-7.5 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? "Procesando..." : cartItems.length === 0 ? "Carrito Vacío" : !user ? "Iniciar Sesión para Pagar" : "Proceder al Pago"}
+                  {loading
+                    ? "Procesando..."
+                    : cartItems.length === 0
+                    ? "Carrito Vacío"
+                    : !user
+                    ? "Iniciar Sesión para Pagar"
+                    : paymentMethod === "tupay"
+                    ? "Pagar con TuPay"
+                    : "Confirmar Pedido"}
                 </button>
               </div>
             </div>
