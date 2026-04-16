@@ -1,0 +1,1009 @@
+{
+  "products": [
+    {
+      "name": "iPhone 15 Pro Max",
+      "query": "iPhone 15 Pro Max smartphone product image white background",
+      "max_images": 3
+    },
+    {
+      "name": "iPhone 15 Pro",
+      "query": "iPhone 15 Pro smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "iPhone 15",
+      "query": "iPhone 15 smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "iPhone 14 Pro Max",
+      "query": "iPhone 14 Pro Max smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy S24 Ultra",
+      "query": "Samsung Galaxy S24 Ultra smartphone product photography",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy S24",
+      "query": "Samsung Galaxy S24 smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy S23",
+      "query": "Samsung Galaxy S23 smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "Google Pixel 8 Pro",
+      "query": "Google Pixel 8 Pro smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "Google Pixel 8",
+      "query": "Google Pixel 8 smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "OnePlus 12",
+      "query": "OnePlus 12 smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "MacBook Pro M3 16 inch",
+      "query": "MacBook Pro M3 16 inch 2024 laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "MacBook Pro M3 14 inch",
+      "query": "MacBook Pro M3 14 inch laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "MacBook Air M2",
+      "query": "MacBook Air M2 laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "MacBook Air M3",
+      "query": "MacBook Air M3 2024 laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dell XPS 15",
+      "query": "Dell XPS 15 laptop product photo white background",
+      "max_images": 3
+    },
+    {
+      "name": "Dell XPS 13",
+      "query": "Dell XPS 13 laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "HP Spectre x360",
+      "query": "HP Spectre x360 laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "Lenovo ThinkPad X1 Carbon",
+      "query": "Lenovo ThinkPad X1 Carbon laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "ASUS ROG Zephyrus G14",
+      "query": "ASUS ROG Zephyrus G14 gaming laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "Razer Blade 15",
+      "query": "Razer Blade 15 gaming laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "iPad Pro 12.9 M2",
+      "query": "iPad Pro 12.9 M2 tablet product image",
+      "max_images": 3
+    },
+    {
+      "name": "iPad Pro 11 M2",
+      "query": "iPad Pro 11 inch M2 tablet product image",
+      "max_images": 3
+    },
+    {
+      "name": "iPad Air M2",
+      "query": "iPad Air M2 tablet product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy Tab S9 Ultra",
+      "query": "Samsung Galaxy Tab S9 Ultra tablet product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy Tab S9",
+      "query": "Samsung Galaxy Tab S9 tablet product image",
+      "max_images": 3
+    },
+    {
+      "name": "Microsoft Surface Pro 9",
+      "query": "Microsoft Surface Pro 9 tablet product image",
+      "max_images": 3
+    },
+    {
+      "name": "Apple Watch Series 9",
+      "query": "Apple Watch Series 9 smartwatch product image",
+      "max_images": 3
+    },
+    {
+      "name": "Apple Watch Ultra 2",
+      "query": "Apple Watch Ultra 2 smartwatch product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy Watch 6",
+      "query": "Samsung Galaxy Watch 6 smartwatch product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy Watch 6 Classic",
+      "query": "Samsung Galaxy Watch 6 Classic smartwatch product image",
+      "max_images": 3
+    },
+    {
+      "name": "Garmin Fenix 7",
+      "query": "Garmin Fenix 7 smartwatch product image",
+      "max_images": 3
+    },
+    {
+      "name": "Fitbit Charge 6",
+      "query": "Fitbit Charge 6 fitness tracker product image",
+      "max_images": 3
+    },
+    {
+      "name": "Sony WH-1000XM5",
+      "query": "Sony WH-1000XM5 headphones product image white background",
+      "max_images": 3
+    },
+    {
+      "name": "Sony WH-1000XM4",
+      "query": "Sony WH-1000XM4 headphones product image",
+      "max_images": 3
+    },
+    {
+      "name": "Bose QuietComfort Ultra",
+      "query": "Bose QuietComfort Ultra headphones product image",
+      "max_images": 3
+    },
+    {
+      "name": "AirPods Pro 2nd Gen",
+      "query": "AirPods Pro 2nd generation product image",
+      "max_images": 3
+    },
+    {
+      "name": "AirPods Max",
+      "query": "AirPods Max headphones product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy Buds 2 Pro",
+      "query": "Samsung Galaxy Buds 2 Pro earbuds product image",
+      "max_images": 3
+    },
+    {
+      "name": "Logitech MX Master 3S",
+      "query": "Logitech MX Master 3S mouse product image",
+      "max_images": 3
+    },
+    {
+      "name": "Logitech MX Keys",
+      "query": "Logitech MX Keys keyboard product image",
+      "max_images": 3
+    },
+    {
+      "name": "Keychron K2",
+      "query": "Keychron K2 mechanical keyboard product image",
+      "max_images": 3
+    },
+    {
+      "name": "Razer DeathAdder V3",
+      "query": "Razer DeathAdder V3 gaming mouse product image",
+      "max_images": 3
+    },
+    {
+      "name": "Canon EOS R6 Mark II",
+      "query": "Canon EOS R6 Mark II camera product image",
+      "max_images": 3
+    },
+    {
+      "name": "Sony A7 IV",
+      "query": "Sony A7 IV camera product image",
+      "max_images": 3
+    },
+    {
+      "name": "Nikon Z8",
+      "query": "Nikon Z8 camera product image",
+      "max_images": 3
+    },
+    {
+      "name": "GoPro Hero 12",
+      "query": "GoPro Hero 12 action camera product image",
+      "max_images": 3
+    },
+    {
+      "name": "DJI Mini 4 Pro",
+      "query": "DJI Mini 4 Pro drone product image",
+      "max_images": 3
+    },
+    {
+      "name": "DJI Air 3",
+      "query": "DJI Air 3 drone product image white background",
+      "max_images": 3
+    },
+    {
+      "name": "Nintendo Switch OLED",
+      "query": "Nintendo Switch OLED console product image",
+      "max_images": 3
+    },
+    {
+      "name": "PlayStation 5",
+      "query": "PlayStation 5 console product image",
+      "max_images": 3
+    },
+    {
+      "name": "Xbox Series X",
+      "query": "Xbox Series X console product image",
+      "max_images": 3
+    },
+    {
+      "name": "Steam Deck",
+      "query": "Steam Deck handheld gaming console product image",
+      "max_images": 3
+    },
+    {
+      "name": "Anker PowerCore 20000",
+      "query": "Anker PowerCore 20000 power bank product image",
+      "max_images": 3
+    },
+    {
+      "name": "Anker 747 Charger",
+      "query": "Anker 747 GaN charger product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung T7 Shield SSD",
+      "query": "Samsung T7 Shield portable SSD product image",
+      "max_images": 3
+    },
+    {
+      "name": "SanDisk Extreme Pro 1TB",
+      "query": "SanDisk Extreme Pro portable SSD product image",
+      "max_images": 3
+    },
+    {
+      "name": "LG C3 OLED TV 65 inch",
+      "query": "LG C3 OLED 65 inch TV product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Frame TV",
+      "query": "Samsung Frame TV product image",
+      "max_images": 3
+    },
+    {
+      "name": "Sonos Arc",
+      "query": "Sonos Arc soundbar product image",
+      "max_images": 3
+    },
+    {
+      "name": "Amazon Echo Dot 5th Gen",
+      "query": "Amazon Echo Dot 5th generation smart speaker product image",
+      "max_images": 3
+    },
+    {
+      "name": "Google Nest Hub Max",
+      "query": "Google Nest Hub Max smart display product image",
+      "max_images": 3
+    },
+    {
+      "name": "Ring Video Doorbell Pro 2",
+      "query": "Ring Video Doorbell Pro 2 product image",
+      "max_images": 3
+    },
+    {
+      "name": "Philips Hue Starter Kit",
+      "query": "Philips Hue smart light starter kit product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dyson V15 Detect",
+      "query": "Dyson V15 Detect vacuum cleaner product image",
+      "max_images": 3
+    },
+    {
+      "name": "Ninja Air Fryer AF101",
+      "query": "Ninja Air Fryer AF101 product image white background",
+      "max_images": 3
+    },
+    {
+      "name": "Cosori Air Fryer",
+      "query": "Cosori air fryer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Instant Vortex Plus Air Fryer",
+      "query": "Instant Vortex Plus air fryer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Philips Essential Air Fryer",
+      "query": "Philips Essential air fryer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Tower Air Fryer",
+      "query": "Tower air fryer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Tefal ActiFry",
+      "query": "Tefal ActiFry air fryer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Ninja Foodi Dual Zone Air Fryer",
+      "query": "Ninja Foodi Dual Zone air fryer product image",
+      "max_images": 3
+    },
+    {
+      "name": "PowerXL Air Fryer",
+      "query": "PowerXL air fryer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Panasonic Microwave NN-SD27HS",
+      "query": "Panasonic microwave oven product image",
+      "max_images": 3
+    },
+    {
+      "name": "Toshiba Microwave EM131A5C",
+      "query": "Toshiba microwave oven product image",
+      "max_images": 3
+    },
+    {
+      "name": "Sharp Microwave R-21LCFS",
+      "query": "Sharp microwave oven product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Microwave MS28J5255UB",
+      "query": "Samsung microwave oven product image",
+      "max_images": 3
+    },
+    {
+      "name": "LG NeoChef Microwave",
+      "query": "LG NeoChef microwave oven product image",
+      "max_images": 3
+    },
+    {
+      "name": "Breville Combi Wave 3-in-1",
+      "query": "Breville Combi Wave microwave product image",
+      "max_images": 3
+    },
+    {
+      "name": "Whirlpool WMC20005YW Microwave",
+      "query": "Whirlpool microwave oven product image",
+      "max_images": 3
+    },
+    {
+      "name": "GE Microwave JES1072SHSS",
+      "query": "GE microwave oven product image",
+      "max_images": 3
+    },
+    {
+      "name": "Vitamix 5200 Blender",
+      "query": "Vitamix 5200 blender product image white background",
+      "max_images": 3
+    },
+    {
+      "name": "Ninja BL610 Blender",
+      "query": "Ninja Professional blender product image",
+      "max_images": 3
+    },
+    {
+      "name": "NutriBullet Pro 900",
+      "query": "NutriBullet Pro 900 blender product image",
+      "max_images": 3
+    },
+    {
+      "name": "KitchenAid K400 Blender",
+      "query": "KitchenAid K400 blender product image",
+      "max_images": 3
+    },
+    {
+      "name": "Blendtec Classic 575",
+      "query": "Blendtec Classic blender product image",
+      "max_images": 3
+    },
+    {
+      "name": "Hamilton Beach Power Elite",
+      "query": "Hamilton Beach Power Elite blender product image",
+      "max_images": 3
+    },
+    {
+      "name": "Keurig K-Elite Coffee Maker",
+      "query": "Keurig K-Elite coffee maker product image",
+      "max_images": 3
+    },
+    {
+      "name": "Nespresso Vertuo Next",
+      "query": "Nespresso Vertuo Next coffee maker product image",
+      "max_images": 3
+    },
+    {
+      "name": "Breville Barista Express",
+      "query": "Breville Barista Express espresso machine product image",
+      "max_images": 3
+    },
+    {
+      "name": "De'Longhi Magnifica",
+      "query": "DeLonghi Magnifica espresso machine product image",
+      "max_images": 3
+    },
+    {
+      "name": "Cuisinart DCC-3200P1",
+      "query": "Cuisinart coffee maker product image",
+      "max_images": 3
+    },
+    {
+      "name": "Mr. Coffee 12-Cup",
+      "query": "Mr Coffee 12 cup coffee maker product image",
+      "max_images": 3
+    },
+    {
+      "name": "Ninja Hot and Cold Brewed System",
+      "query": "Ninja Hot Cold Brew coffee maker product image",
+      "max_images": 3
+    },
+    {
+      "name": "Hamilton Beach FlexBrew",
+      "query": "Hamilton Beach FlexBrew coffee maker product image",
+      "max_images": 3
+    },
+    {
+      "name": "Breville Smart Oven Air",
+      "query": "Breville Smart Oven Air product image",
+      "max_images": 3
+    },
+    {
+      "name": "Cuisinart TOA-60 Air Fryer Toaster Oven",
+      "query": "Cuisinart TOA-60 toaster oven product image",
+      "max_images": 3
+    },
+    {
+      "name": "KitchenAid 2-Slice Toaster",
+      "query": "KitchenAid 2 slice toaster product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dualit NewGen 4-Slice Toaster",
+      "query": "Dualit 4 slice toaster product image",
+      "max_images": 3
+    },
+    {
+      "name": "Breville Die-Cast 2-Slice Toaster",
+      "query": "Breville 2 slice toaster product image",
+      "max_images": 3
+    },
+    {
+      "name": "Cuisinart CPT-180 Toaster",
+      "query": "Cuisinart toaster product image",
+      "max_images": 3
+    },
+    {
+      "name": "KitchenAid Food Processor KFP1466",
+      "query": "KitchenAid food processor product image",
+      "max_images": 3
+    },
+    {
+      "name": "Cuisinart DFP-14BCNY",
+      "query": "Cuisinart food processor product image",
+      "max_images": 3
+    },
+    {
+      "name": "Ninja BN601 Food Processor",
+      "query": "Ninja food processor product image",
+      "max_images": 3
+    },
+    {
+      "name": "Breville BFP800XL Food Processor",
+      "query": "Breville Sous Chef food processor product image",
+      "max_images": 3
+    },
+    {
+      "name": "Hamilton Beach Food Processor",
+      "query": "Hamilton Beach food processor product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dyson Cool AM07 Tower Fan",
+      "query": "Dyson tower fan product image white background",
+      "max_images": 3
+    },
+    {
+      "name": "Lasko Oscillating Tower Fan",
+      "query": "Lasko tower fan product image",
+      "max_images": 3
+    },
+    {
+      "name": "Honeywell QuietSet Tower Fan",
+      "query": "Honeywell tower fan product image",
+      "max_images": 3
+    },
+    {
+      "name": "Vornado 630 Mid-Size Fan",
+      "query": "Vornado 630 fan product image",
+      "max_images": 3
+    },
+    {
+      "name": "Rowenta Turbo Silence Stand Fan",
+      "query": "Rowenta stand fan product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dreo Tower Fan",
+      "query": "Dreo tower fan product image",
+      "max_images": 3
+    },
+    {
+      "name": "Ozeri Brezza III Fan",
+      "query": "Ozeri tower fan product image",
+      "max_images": 3
+    },
+    {
+      "name": "Pelonis Oscillating Fan",
+      "query": "Pelonis oscillating fan product image",
+      "max_images": 3
+    },
+    {
+      "name": "Shark NV752 Upright Vacuum",
+      "query": "Shark Navigator upright vacuum product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dyson Ball Animal 2",
+      "query": "Dyson Ball Animal 2 vacuum product image",
+      "max_images": 3
+    },
+    {
+      "name": "Bissell CleanView Swivel",
+      "query": "Bissell CleanView vacuum product image",
+      "max_images": 3
+    },
+    {
+      "name": "Hoover WindTunnel 3",
+      "query": "Hoover WindTunnel vacuum product image",
+      "max_images": 3
+    },
+    {
+      "name": "Eureka PowerSpeed Vacuum",
+      "query": "Eureka PowerSpeed vacuum product image",
+      "max_images": 3
+    },
+    {
+      "name": "Miele Complete C3",
+      "query": "Miele Complete C3 vacuum product image",
+      "max_images": 3
+    },
+    {
+      "name": "Tineco Pure ONE S12",
+      "query": "Tineco cordless vacuum product image",
+      "max_images": 3
+    },
+    {
+      "name": "Shark IZ363HT Cordless Vacuum",
+      "query": "Shark cordless vacuum product image",
+      "max_images": 3
+    },
+    {
+      "name": "BLACK+DECKER Dustbuster",
+      "query": "BLACK DECKER Dustbuster handheld vacuum product image",
+      "max_images": 3
+    },
+    {
+      "name": "Bissell Little Green Machine",
+      "query": "Bissell Little Green carpet cleaner product image",
+      "max_images": 3
+    },
+    {
+      "name": "iRobot Roomba j7+",
+      "query": "iRobot Roomba j7 robot vacuum product image",
+      "max_images": 3
+    },
+    {
+      "name": "Roborock S7 MaxV",
+      "query": "Roborock S7 MaxV robot vacuum product image",
+      "max_images": 3
+    },
+    {
+      "name": "Ecovacs Deebot X1 Omni",
+      "query": "Ecovacs Deebot robot vacuum product image",
+      "max_images": 3
+    },
+    {
+      "name": "Levoit Air Purifier Core 300",
+      "query": "Levoit Core 300 air purifier product image",
+      "max_images": 3
+    },
+    {
+      "name": "Coway Airmega 400",
+      "query": "Coway Airmega 400 air purifier product image",
+      "max_images": 3
+    },
+    {
+      "name": "Winix 5500-2 Air Purifier",
+      "query": "Winix 5500 air purifier product image",
+      "max_images": 3
+    },
+    {
+      "name": "Honeywell HPA300 Air Purifier",
+      "query": "Honeywell HPA300 air purifier product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dyson Purifier Cool TP07",
+      "query": "Dyson air purifier fan product image",
+      "max_images": 3
+    },
+    {
+      "name": "Blueair Blue Pure 211+",
+      "query": "Blueair Blue Pure air purifier product image",
+      "max_images": 3
+    },
+    {
+      "name": "Vornado MVH Heater",
+      "query": "Vornado MVH space heater product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dr. Infrared Heater",
+      "query": "Dr Infrared portable space heater product image",
+      "max_images": 3
+    },
+    {
+      "name": "Lasko Ceramic Tower Heater",
+      "query": "Lasko ceramic tower heater product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dyson Hot+Cool AM09",
+      "query": "Dyson Hot Cool fan heater product image",
+      "max_images": 3
+    },
+    {
+      "name": "De'Longhi Oil-Filled Radiator",
+      "query": "DeLonghi oil filled radiator heater product image",
+      "max_images": 3
+    },
+    {
+      "name": "Honeywell HCE200W Heater",
+      "query": "Honeywell ceramic heater product image",
+      "max_images": 3
+    },
+    {
+      "name": "Levoit Humidifier Classic 300S",
+      "query": "Levoit humidifier product image white background",
+      "max_images": 3
+    },
+    {
+      "name": "Pure Enrichment MistAire",
+      "query": "Pure Enrichment MistAire humidifier product image",
+      "max_images": 3
+    },
+    {
+      "name": "Vicks Warm Mist Humidifier",
+      "query": "Vicks warm mist humidifier product image",
+      "max_images": 3
+    },
+    {
+      "name": "Honeywell HCM350W Humidifier",
+      "query": "Honeywell cool mist humidifier product image",
+      "max_images": 3
+    },
+    {
+      "name": "Frigidaire 50-Pint Dehumidifier",
+      "query": "Frigidaire dehumidifier product image",
+      "max_images": 3
+    },
+    {
+      "name": "hOmeLabs Dehumidifier",
+      "query": "hOmeLabs dehumidifier product image",
+      "max_images": 3
+    },
+    {
+      "name": "GE Dehumidifier",
+      "query": "GE dehumidifier product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dyson Supersonic Hair Dryer",
+      "query": "Dyson Supersonic hair dryer product image white background",
+      "max_images": 3
+    },
+    {
+      "name": "Revlon One-Step Hair Dryer",
+      "query": "Revlon One Step hair dryer brush product image",
+      "max_images": 3
+    },
+    {
+      "name": "BaBylissPRO Nano Titanium",
+      "query": "BaBylissPRO hair dryer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Conair InfinitiPRO Hair Dryer",
+      "query": "Conair InfinitiPRO hair dryer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Remington D3190 Hair Dryer",
+      "query": "Remington hair dryer product image",
+      "max_images": 3
+    },
+    {
+      "name": "InfinitiPRO by Conair Dryer",
+      "query": "Conair professional hair dryer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Braun Series 9 Pro Shaver",
+      "query": "Braun Series 9 electric shaver product image",
+      "max_images": 3
+    },
+    {
+      "name": "Philips Norelco 9000 Prestige",
+      "query": "Philips Norelco electric shaver product image",
+      "max_images": 3
+    },
+    {
+      "name": "Panasonic Arc5 Electric Razor",
+      "query": "Panasonic Arc5 electric shaver product image",
+      "max_images": 3
+    },
+    {
+      "name": "Braun Series 7 Shaver",
+      "query": "Braun Series 7 electric shaver product image",
+      "max_images": 3
+    },
+    {
+      "name": "Remington F5-5800 Foil Shaver",
+      "query": "Remington foil electric shaver product image",
+      "max_images": 3
+    },
+    {
+      "name": "Wahl Lifeproof Shaver",
+      "query": "Wahl Lifeproof electric shaver product image",
+      "max_images": 3
+    },
+    {
+      "name": "Philips Sonicare DiamondClean",
+      "query": "Philips Sonicare DiamondClean toothbrush product image",
+      "max_images": 3
+    },
+    {
+      "name": "Oral-B iO Series 9",
+      "query": "Oral-B iO Series 9 electric toothbrush product image",
+      "max_images": 3
+    },
+    {
+      "name": "Waterpik Sonic-Fusion 2.0",
+      "query": "Waterpik Sonic Fusion toothbrush product image",
+      "max_images": 3
+    },
+    {
+      "name": "Oral-B Pro 1000",
+      "query": "Oral-B Pro 1000 electric toothbrush product image",
+      "max_images": 3
+    },
+    {
+      "name": "Philips Sonicare ProtectiveClean",
+      "query": "Philips Sonicare ProtectiveClean toothbrush product image",
+      "max_images": 3
+    },
+    {
+      "name": "GHD Platinum+ Hair Straightener",
+      "query": "GHD Platinum hair straightener product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dyson Corrale Straightener",
+      "query": "Dyson Corrale hair straightener product image",
+      "max_images": 3
+    },
+    {
+      "name": "Remington Pro Hair Straightener",
+      "query": "Remington Pro hair straightener product image",
+      "max_images": 3
+    },
+    {
+      "name": "HSI Professional Flat Iron",
+      "query": "HSI professional flat iron product image",
+      "max_images": 3
+    },
+    {
+      "name": "Philips Norelco Multigroom 7000",
+      "query": "Philips Norelco beard trimmer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Wahl Stainless Steel Trimmer",
+      "query": "Wahl beard trimmer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Braun BT7240 Beard Trimmer",
+      "query": "Braun beard trimmer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Remington MB4700 Beard Trimmer",
+      "query": "Remington beard trimmer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dell UltraSharp U2723DE Monitor",
+      "query": "Dell UltraSharp monitor product image",
+      "max_images": 3
+    },
+    {
+      "name": "LG 27UK850-W 4K Monitor",
+      "query": "LG 4K monitor product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Odyssey G7 Gaming Monitor",
+      "query": "Samsung Odyssey gaming monitor product image",
+      "max_images": 3
+    },
+    {
+      "name": "ASUS ProArt Display PA279CV",
+      "query": "ASUS ProArt monitor product image",
+      "max_images": 3
+    },
+    {
+      "name": "BenQ PD2700U Designer Monitor",
+      "query": "BenQ designer monitor product image",
+      "max_images": 3
+    },
+    {
+      "name": "Acer Predator X27 Gaming Monitor",
+      "query": "Acer Predator gaming monitor product image",
+      "max_images": 3
+    },
+    {
+      "name": "Corsair K95 RGB Platinum",
+      "query": "Corsair K95 RGB keyboard product image",
+      "max_images": 3
+    },
+    {
+      "name": "SteelSeries Apex Pro",
+      "query": "SteelSeries Apex Pro keyboard product image",
+      "max_images": 3
+    },
+    {
+      "name": "Razer BlackWidow V3 Pro",
+      "query": "Razer BlackWidow keyboard product image",
+      "max_images": 3
+    },
+    {
+      "name": "Logitech G Pro X Keyboard",
+      "query": "Logitech G Pro X keyboard product image",
+      "max_images": 3
+    },
+    {
+      "name": "Ducky One 2 Mini Keyboard",
+      "query": "Ducky One 2 Mini keyboard product image",
+      "max_images": 3
+    },
+    {
+      "name": "Anne Pro 2 Mechanical Keyboard",
+      "query": "Anne Pro 2 keyboard product image",
+      "max_images": 3
+    },
+    {
+      "name": "Logitech G502 HERO",
+      "query": "Logitech G502 HERO gaming mouse product image",
+      "max_images": 3
+    },
+    {
+      "name": "Razer Viper Ultimate",
+      "query": "Razer Viper Ultimate mouse product image",
+      "max_images": 3
+    },
+    {
+      "name": "SteelSeries Rival 650",
+      "query": "SteelSeries Rival 650 mouse product image",
+      "max_images": 3
+    },
+    {
+      "name": "Corsair Dark Core RGB Pro",
+      "query": "Corsair Dark Core mouse product image",
+      "max_images": 3
+    },
+    {
+      "name": "Glorious Model O",
+      "query": "Glorious Model O gaming mouse product image",
+      "max_images": 3
+    },
+    {
+      "name": "Logitech C920 HD Pro Webcam",
+      "query": "Logitech C920 webcam product image",
+      "max_images": 3
+    },
+    {
+      "name": "Razer Kiyo Pro Webcam",
+      "query": "Razer Kiyo Pro webcam product image",
+      "max_images": 3
+    },
+    {
+      "name": "Logitech StreamCam",
+      "query": "Logitech StreamCam webcam product image",
+      "max_images": 3
+    },
+    {
+      "name": "Elgato Facecam Webcam",
+      "query": "Elgato Facecam webcam product image",
+      "max_images": 3
+    },
+    {
+      "name": "HP OfficeJet Pro 9015e",
+      "query": "HP OfficeJet Pro printer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Canon PIXMA TR8620",
+      "query": "Canon PIXMA printer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Epson EcoTank ET-2720",
+      "query": "Epson EcoTank printer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Brother HL-L2350DW",
+      "query": "Brother laser printer product image",
+      "max_images": 3
+    },
+    {
+      "name": "HP LaserJet Pro M404dn",
+      "query": "HP LaserJet Pro printer product image",
+      "max_images": 3
+    },
+    {
+      "name": "Seagate Backup Plus 5TB",
+      "query": "Seagate Backup Plus external hard drive product image",
+      "max_images": 3
+    },
+    {
+      "name": "Western Digital My Passport 4TB",
+      "query": "WD My Passport external drive product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung T5 Portable SSD",
+      "query": "Samsung T5 portable SSD product image",
+      "max_images": 3
+    },
+    {
+      "name": "SanDisk Extreme Portable SSD",
+      "query": "SanDisk Extreme portable SSD product image",
+      "max_images": 3
+    },
+    {
+      "name": "Crucial X8 Portable SSD",
+      "query": "Crucial X8 portable SSD product image",
+      "max_images": 3
+    }
+  ]
+}

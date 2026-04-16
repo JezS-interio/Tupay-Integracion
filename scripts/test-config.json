@@ -1,0 +1,14 @@
+{
+  "products": [
+    {
+      "name": "iPhone 15 Pro",
+      "query": "iPhone 15 Pro product image",
+      "max_images": 5
+    },
+    {
+      "name": "MacBook Pro M3",
+      "query": "MacBook Pro M3 laptop",
+      "max_images": 5
+    }
+  ]
+}

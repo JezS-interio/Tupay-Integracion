@@ -1,0 +1,24 @@
+[
+  {
+    "title": "True Wireless Noise Cancelling Headphone",
+    "subtitle": "Premium Audio Experience",
+    "description": "Experience high-quality sound with active noise cancellation. Perfect for music, work, and calls.",
+    "buttonText": "Shop Now",
+    "buttonLink": "/shop",
+    "badge": "30% Off",
+    "image": "banner-headphones.jpg",
+    "order": 1,
+    "isActive": true
+  },
+  {
+    "title": "MacBook Air M2 - 13 inch",
+    "subtitle": "Supercharged by M2",
+    "description": "Incredible performance with M2 chip, ultra-thin design, and up to 18 hours of battery life.",
+    "buttonText": "Learn More",
+    "buttonLink": "/shop",
+    "badge": "New",
+    "image": "banner-macbook.jpg",
+    "order": 2,
+    "isActive": true
+  }
+]

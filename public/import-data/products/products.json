@@ -1,0 +1,30 @@
+[
+  {
+    "title": "iPhone 14 Pro Max 256GB",
+    "description": "The latest iPhone with ProMotion display, A16 Bionic chip, and advanced camera system. Perfect for photography and gaming.",
+    "price": 1299.99,
+    "discountedPrice": 1199.99,
+    "category": "Smartphones",
+    "stock": 25,
+    "sku": "IPH-14PM-256",
+    "images": ["iphone-14-pro-1.jpg", "iphone-14-pro-2.jpg"],
+    "isActive": true,
+    "isFeatured": true,
+    "isNewArrival": true,
+    "isBestSeller": false
+  },
+  {
+    "title": "MacBook Pro 14-inch M2",
+    "description": "Professional laptop with M2 Pro chip, 16GB RAM, and stunning Liquid Retina XDR display. Ideal for developers and creators.",
+    "price": 2499.99,
+    "discountedPrice": 2299.99,
+    "category": "Computers",
+    "stock": 15,
+    "sku": "MBP-14-M2",
+    "images": ["macbook-pro-1.jpg", "macbook-pro-2.jpg"],
+    "isActive": true,
+    "isFeatured": true,
+    "isNewArrival": false,
+    "isBestSeller": true
+  }
+]

@@ -1,0 +1,324 @@
+{
+  "products": [
+    {
+      "name": "iPhone 15 Pro Max",
+      "query": "iPhone 15 Pro Max smartphone product image white background",
+      "max_images": 3
+    },
+    {
+      "name": "iPhone 15 Pro",
+      "query": "iPhone 15 Pro smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "iPhone 15",
+      "query": "iPhone 15 smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "iPhone 14 Pro Max",
+      "query": "iPhone 14 Pro Max smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy S24 Ultra",
+      "query": "Samsung Galaxy S24 Ultra smartphone product photography",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy S24",
+      "query": "Samsung Galaxy S24 smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy S23",
+      "query": "Samsung Galaxy S23 smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "Google Pixel 8 Pro",
+      "query": "Google Pixel 8 Pro smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "Google Pixel 8",
+      "query": "Google Pixel 8 smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "OnePlus 12",
+      "query": "OnePlus 12 smartphone product image",
+      "max_images": 3
+    },
+    {
+      "name": "MacBook Pro M3 16 inch",
+      "query": "MacBook Pro M3 16 inch 2024 laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "MacBook Pro M3 14 inch",
+      "query": "MacBook Pro M3 14 inch laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "MacBook Air M2",
+      "query": "MacBook Air M2 laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "MacBook Air M3",
+      "query": "MacBook Air M3 2024 laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dell XPS 15",
+      "query": "Dell XPS 15 laptop product photo white background",
+      "max_images": 3
+    },
+    {
+      "name": "Dell XPS 13",
+      "query": "Dell XPS 13 laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "HP Spectre x360",
+      "query": "HP Spectre x360 laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "Lenovo ThinkPad X1 Carbon",
+      "query": "Lenovo ThinkPad X1 Carbon laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "ASUS ROG Zephyrus G14",
+      "query": "ASUS ROG Zephyrus G14 gaming laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "Razer Blade 15",
+      "query": "Razer Blade 15 gaming laptop product image",
+      "max_images": 3
+    },
+    {
+      "name": "iPad Pro 12.9 M2",
+      "query": "iPad Pro 12.9 M2 tablet product image",
+      "max_images": 3
+    },
+    {
+      "name": "iPad Pro 11 M2",
+      "query": "iPad Pro 11 inch M2 tablet product image",
+      "max_images": 3
+    },
+    {
+      "name": "iPad Air M2",
+      "query": "iPad Air M2 tablet product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy Tab S9 Ultra",
+      "query": "Samsung Galaxy Tab S9 Ultra tablet product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy Tab S9",
+      "query": "Samsung Galaxy Tab S9 tablet product image",
+      "max_images": 3
+    },
+    {
+      "name": "Microsoft Surface Pro 9",
+      "query": "Microsoft Surface Pro 9 tablet product image",
+      "max_images": 3
+    },
+    {
+      "name": "Apple Watch Series 9",
+      "query": "Apple Watch Series 9 smartwatch product image",
+      "max_images": 3
+    },
+    {
+      "name": "Apple Watch Ultra 2",
+      "query": "Apple Watch Ultra 2 smartwatch product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy Watch 6",
+      "query": "Samsung Galaxy Watch 6 smartwatch product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy Watch 6 Classic",
+      "query": "Samsung Galaxy Watch 6 Classic smartwatch product image",
+      "max_images": 3
+    },
+    {
+      "name": "Garmin Fenix 7",
+      "query": "Garmin Fenix 7 smartwatch product image",
+      "max_images": 3
+    },
+    {
+      "name": "Fitbit Charge 6",
+      "query": "Fitbit Charge 6 fitness tracker product image",
+      "max_images": 3
+    },
+    {
+      "name": "Sony WH-1000XM5",
+      "query": "Sony WH-1000XM5 headphones product image white background",
+      "max_images": 3
+    },
+    {
+      "name": "Sony WH-1000XM4",
+      "query": "Sony WH-1000XM4 headphones product image",
+      "max_images": 3
+    },
+    {
+      "name": "Bose QuietComfort Ultra",
+      "query": "Bose QuietComfort Ultra headphones product image",
+      "max_images": 3
+    },
+    {
+      "name": "AirPods Pro 2nd Gen",
+      "query": "AirPods Pro 2nd generation product image",
+      "max_images": 3
+    },
+    {
+      "name": "AirPods Max",
+      "query": "AirPods Max headphones product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Galaxy Buds 2 Pro",
+      "query": "Samsung Galaxy Buds 2 Pro earbuds product image",
+      "max_images": 3
+    },
+    {
+      "name": "Logitech MX Master 3S",
+      "query": "Logitech MX Master 3S mouse product image",
+      "max_images": 3
+    },
+    {
+      "name": "Logitech MX Keys",
+      "query": "Logitech MX Keys keyboard product image",
+      "max_images": 3
+    },
+    {
+      "name": "Keychron K2",
+      "query": "Keychron K2 mechanical keyboard product image",
+      "max_images": 3
+    },
+    {
+      "name": "Razer DeathAdder V3",
+      "query": "Razer DeathAdder V3 gaming mouse product image",
+      "max_images": 3
+    },
+    {
+      "name": "Canon EOS R6 Mark II",
+      "query": "Canon EOS R6 Mark II camera product image",
+      "max_images": 3
+    },
+    {
+      "name": "Sony A7 IV",
+      "query": "Sony A7 IV camera product image",
+      "max_images": 3
+    },
+    {
+      "name": "Nikon Z8",
+      "query": "Nikon Z8 camera product image",
+      "max_images": 3
+    },
+    {
+      "name": "GoPro Hero 12",
+      "query": "GoPro Hero 12 action camera product image",
+      "max_images": 3
+    },
+    {
+      "name": "DJI Mini 4 Pro",
+      "query": "DJI Mini 4 Pro drone product image",
+      "max_images": 3
+    },
+    {
+      "name": "DJI Air 3",
+      "query": "DJI Air 3 drone product image white background",
+      "max_images": 3
+    },
+    {
+      "name": "Nintendo Switch OLED",
+      "query": "Nintendo Switch OLED console product image",
+      "max_images": 3
+    },
+    {
+      "name": "PlayStation 5",
+      "query": "PlayStation 5 console product image",
+      "max_images": 3
+    },
+    {
+      "name": "Xbox Series X",
+      "query": "Xbox Series X console product image",
+      "max_images": 3
+    },
+    {
+      "name": "Steam Deck",
+      "query": "Steam Deck handheld gaming console product image",
+      "max_images": 3
+    },
+    {
+      "name": "Anker PowerCore 20000",
+      "query": "Anker PowerCore 20000 power bank product image",
+      "max_images": 3
+    },
+    {
+      "name": "Anker 747 Charger",
+      "query": "Anker 747 GaN charger product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung T7 Shield SSD",
+      "query": "Samsung T7 Shield portable SSD product image",
+      "max_images": 3
+    },
+    {
+      "name": "SanDisk Extreme Pro 1TB",
+      "query": "SanDisk Extreme Pro portable SSD product image",
+      "max_images": 3
+    },
+    {
+      "name": "LG C3 OLED TV 65 inch",
+      "query": "LG C3 OLED 65 inch TV product image",
+      "max_images": 3
+    },
+    {
+      "name": "Samsung Frame TV",
+      "query": "Samsung Frame TV product image",
+      "max_images": 3
+    },
+    {
+      "name": "Sonos Arc",
+      "query": "Sonos Arc soundbar product image",
+      "max_images": 3
+    },
+    {
+      "name": "Amazon Echo Dot 5th Gen",
+      "query": "Amazon Echo Dot 5th generation smart speaker product image",
+      "max_images": 3
+    },
+    {
+      "name": "Google Nest Hub Max",
+      "query": "Google Nest Hub Max smart display product image",
+      "max_images": 3
+    },
+    {
+      "name": "Ring Video Doorbell Pro 2",
+      "query": "Ring Video Doorbell Pro 2 product image",
+      "max_images": 3
+    },
+    {
+      "name": "Philips Hue Starter Kit",
+      "query": "Philips Hue smart light starter kit product image",
+      "max_images": 3
+    },
+    {
+      "name": "Dyson V15 Detect",
+      "query": "Dyson V15 Detect vacuum cleaner product image",
+      "max_images": 3
+    }
+  ]
+}
