@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { Agent, fetch as undiciFetch } from 'undici';
 
 export async function POST(request: NextRequest) {
   try {
@@ -68,7 +69,15 @@ export async function POST(request: NextRequest) {
     const authHash = hmac.digest('hex');
     const authorization = `TUPAY ${authHash}`;
 
-    const response = await fetch(`${baseUrl}/v3/deposits`, {
+    const isStaging = process.env.TUPAY_ENVIRONMENT !== 'production';
+    const fetchFn = isStaging
+      ? (url: string, opts: RequestInit) => undiciFetch(url, {
+          ...opts,
+          dispatcher: new Agent({ connect: { rejectUnauthorized: false } }),
+        } as Parameters<typeof undiciFetch>[1])
+      : fetch;
+
+    const response = await fetchFn(`${baseUrl}/v3/deposits`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -96,9 +105,11 @@ export async function POST(request: NextRequest) {
       checkout_type: tupayData.checkout_type,
     });
   } catch (error) {
-    console.error('Error creating TuPay deposit:', error);
+    const message = error instanceof Error ? error.message : String(error);
+    const stack = error instanceof Error ? error.stack : undefined;
+    console.error('Error creating TuPay deposit:', message, stack);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: message || 'Internal server error' },
       { status: 500 }
     );
   }
