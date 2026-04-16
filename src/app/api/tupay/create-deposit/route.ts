@@ -1,6 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { Agent, fetch as undiciFetch } from 'undici';
+import https from 'https';
+
+function httpsPost(
+  url: string,
+  headers: Record<string, string>,
+  body: string,
+  rejectUnauthorized = true
+): Promise<{ ok: boolean; status: number; data: unknown }> {
+  return new Promise((resolve, reject) => {
+    const u = new URL(url);
+    const req = https.request(
+      {
+        hostname: u.hostname,
+        port: u.port || 443,
+        path: u.pathname + u.search,
+        method: 'POST',
+        headers,
+        rejectUnauthorized,
+      },
+      (res) => {
+        let raw = '';
+        res.on('data', (chunk) => { raw += chunk; });
+        res.on('end', () => {
+          try {
+            const data = JSON.parse(raw);
+            resolve({ ok: (res.statusCode ?? 0) >= 200 && (res.statusCode ?? 0) < 300, status: res.statusCode ?? 0, data });
+          } catch {
+            reject(new Error(`Failed to parse TuPay response: ${raw}`));
+          }
+        });
+      }
+    );
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,8 +67,8 @@ export async function POST(request: NextRequest) {
     const apiSignature = process.env.TUPAY_API_SIGNATURE!;
     const baseUrl = process.env.TUPAY_BASE_URL!;
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.headers.get('origin') || 'https://tupay-integracion.vercel.app';
+    const isStaging = process.env.TUPAY_ENVIRONMENT !== 'production';
 
-    // Build payload
     const payload = {
       country: 'PE',
       currency,
@@ -51,50 +87,43 @@ export async function POST(request: NextRequest) {
       error_url: errorUrl || `${appUrl}/payment/error?order=${orderId}`,
       back_url: backUrl || `${appUrl}/checkout`,
       notification_url: `${appUrl}/api/tupay/webhook`,
-      test: process.env.TUPAY_ENVIRONMENT !== 'production',
+      test: isStaging,
       mobile: false,
       request_payer_data_on_validation_failure: false,
     };
 
     const jsonPayload = JSON.stringify(payload);
 
-    // Build headers
     const xDate = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
     const idempotencyKey = crypto.randomUUID();
 
-    // Calculate HMAC-SHA256: X-Date + X-Login + JSONPayload
     const signatureInput = xDate + apiKey + jsonPayload;
     const hmac = crypto.createHmac('sha256', apiSignature);
     hmac.update(signatureInput);
     const authHash = hmac.digest('hex');
-    const authorization = `TUPAY ${authHash}`;
 
-    const isStaging = process.env.TUPAY_ENVIRONMENT !== 'production';
-    const fetchFn = isStaging
-      ? (url: string, opts: RequestInit) => undiciFetch(url, {
-          ...opts,
-          dispatcher: new Agent({ connect: { rejectUnauthorized: false } }),
-        } as Parameters<typeof undiciFetch>[1])
-      : fetch;
+    const reqHeaders: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(jsonPayload).toString(),
+      'X-Login': apiKey,
+      'X-Date': xDate,
+      'Authorization': `TUPAY ${authHash}`,
+      'X-Idempotency-Key': idempotencyKey,
+    };
 
-    const response = await fetchFn(`${baseUrl}/v3/deposits`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Login': apiKey,
-        'X-Date': xDate,
-        'Authorization': authorization,
-        'X-Idempotency-Key': idempotencyKey,
-      },
-      body: jsonPayload,
-    });
+    const response = await httpsPost(
+      `${baseUrl}/v3/deposits`,
+      reqHeaders,
+      jsonPayload,
+      !isStaging // rejectUnauthorized: false en staging
+    );
 
-    const tupayData = await response.json();
+    const tupayData = response.data as Record<string, unknown>;
 
     if (!response.ok) {
       console.error('TuPay API error:', tupayData);
       return NextResponse.json(
-        { error: tupayData.message || 'TuPay API error', details: tupayData },
+        { error: (tupayData.message as string) || 'TuPay API error', details: tupayData },
         { status: response.status }
       );
     }
@@ -106,8 +135,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    const stack = error instanceof Error ? error.stack : undefined;
-    console.error('Error creating TuPay deposit:', message, stack);
+    console.error('Error creating TuPay deposit:', message);
     return NextResponse.json(
       { error: message || 'Internal server error' },
       { status: 500 }
