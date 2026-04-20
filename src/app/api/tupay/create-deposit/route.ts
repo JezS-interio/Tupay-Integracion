@@ -6,6 +6,7 @@ if (process.env.TUPAY_ENVIRONMENT !== 'production') {
 
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { tupayFetch } from '@/lib/tupay-fetch';
 
 export async function POST(request: NextRequest) {
   try {
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
     hmac.update(signatureInput);
     const authHash = hmac.digest('hex');
 
-    const response = await fetch(`${baseUrl}/v3/deposits`, {
+    const response = await tupayFetch(`${baseUrl}/v3/deposits`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

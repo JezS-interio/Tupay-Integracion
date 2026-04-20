@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { tupayFetch } from '@/lib/tupay-fetch';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
     hmac.update(xDate + apiKey);
     const authHash = hmac.digest('hex');
 
-    const statusResponse = await fetch(`${baseUrl}/v3/deposits/${deposit_id}`, {
+    const statusResponse = await tupayFetch(`${baseUrl}/v3/deposits/${deposit_id}`, {
       method: 'GET',
       headers: {
         'X-Login': apiKey,
