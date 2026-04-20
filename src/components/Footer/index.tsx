@@ -1,14 +1,23 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useCartModalContext } from "@/app/context/CartSidebarModalContext";
 
 const Footer = () => {
   const year = new Date().getFullYear();
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
-    <footer className="overflow-hidden">
+    <footer className="overflow-hidden border-t border-gray-200">
       <div className="max-w-[1170px] mx-auto px-4 sm:px-8 xl:px-0">
         {/* <!-- footer menu start --> */}
-        <div className="flex flex-wrap xl:flex-nowrap gap-10 xl:gap-19 xl:justify-between pt-17.5 xl:pt-22.5 pb-10 xl:pb-15">
+        <div className="flex flex-wrap xl:flex-nowrap gap-10 xl:gap-19 xl:justify-between pt-12 xl:pt-16 pb-10 xl:pb-15">
           <div className="max-w-[330px] w-full">
             <h2 className="mb-7.5 text-custom-1 font-medium text-dark">
               Ayuda y Soporte
@@ -42,33 +51,27 @@ const Footer = () => {
               Cuenta
             </h2>
 
-            <ul className="flex flex-col gap-3.5">
-              <li>
-                <a className="ease-out duration-200 hover:text-blue" href="#">
-                  Mi Cuenta
-                </a>
-              </li>
-              <li>
-                <a className="ease-out duration-200 hover:text-blue" href="#">
-                  Iniciar Sesión / Registrarse
-                </a>
-              </li>
-              <li>
-                <a className="ease-out duration-200 hover:text-blue" href="#">
-                  Carrito
-                </a>
-              </li>
-              <li>
-                <a className="ease-out duration-200 hover:text-blue" href="#">
-                  Lista de Deseos
-                </a>
-              </li>
-              <li>
-                <a className="ease-out duration-200 hover:text-blue" href="#">
-                  Tienda
-                </a>
-              </li>
-            </ul>
+            {mounted ? (
+              <AccountLinks />
+            ) : (
+              <ul className="flex flex-col gap-3.5">
+                <li>
+                  <a className="ease-out duration-200 hover:text-blue" href="/my-account">
+                    Mi Cuenta
+                  </a>
+                </li>
+                <li>
+                  <a className="ease-out duration-200 hover:text-blue" href="/signin">
+                    Iniciar Sesión / Registrarse
+                  </a>
+                </li>
+                <li>
+                  <a className="ease-out duration-200 hover:text-blue" href="/cart">
+                    Carrito
+                  </a>
+                </li>
+              </ul>
+            )}
           </div>
 
           <div className="w-full sm:w-auto">
@@ -78,29 +81,24 @@ const Footer = () => {
 
             <ul className="flex flex-col gap-3">
               <li>
-                <a className="ease-out duration-200 hover:text-blue" href="#">
+                <Link className="ease-out duration-200 hover:text-blue" href="/privacy-policy">
                   Política de Privacidad
-                </a>
+                </Link>
               </li>
               <li>
-                <a className="ease-out duration-200 hover:text-blue" href="#">
+                <Link className="ease-out duration-200 hover:text-blue" href="/refund-policy">
                   Política de Reembolso
-                </a>
+                </Link>
               </li>
               <li>
-                <a className="ease-out duration-200 hover:text-blue" href="#">
+                <Link className="ease-out duration-200 hover:text-blue" href="/terms">
                   Términos de Uso
-                </a>
+                </Link>
               </li>
               <li>
-                <a className="ease-out duration-200 hover:text-blue" href="#">
+                <Link className="ease-out duration-200 hover:text-blue" href="/faq">
                   Preguntas Frecuentes
-                </a>
-              </li>
-              <li>
-                <a className="ease-out duration-200 hover:text-blue" href="#">
-                  Contacto
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -171,3 +169,31 @@ const Footer = () => {
 };
 
 export default Footer;
+
+function AccountLinks() {
+  const { openCartModal } = useCartModalContext();
+
+  return (
+    <ul className="flex flex-col gap-3.5">
+      <li>
+        <Link className="ease-out duration-200 hover:text-blue" href="/my-account">
+          Mi Cuenta
+        </Link>
+      </li>
+      <li>
+        <Link className="ease-out duration-200 hover:text-blue" href="/signin">
+          Iniciar Sesión / Registrarse
+        </Link>
+      </li>
+      <li>
+        <button
+          type="button"
+          onClick={() => openCartModal()}
+          className="text-left ease-out duration-200 hover:text-blue"
+        >
+          Carrito
+        </button>
+      </li>
+    </ul>
+  );
+}

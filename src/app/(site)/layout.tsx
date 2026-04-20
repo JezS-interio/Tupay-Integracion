@@ -76,13 +76,13 @@ export default function RootLayout({
                     <QuickViewModal />
                     <CartSidebarModal />
                     <PreviewSliderModal />
+                    <Footer />
                     </PreviewSliderProvider>
                   </ModalProvider>
                 </CartModalProvider>
               </AuthProvider>
             </ReduxProvider>
             <ScrollToTop />
-            <Footer />
           </>
         )}
       </body>
