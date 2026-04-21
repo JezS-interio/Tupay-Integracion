@@ -184,12 +184,11 @@ const Pagar = () => {
       <Breadcrumb title={"Pagar"} pages={["Pagar"]} />
       <section className="overflow-hidden py-20 bg-gray-2">
         <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
+          <Login />
           <form onSubmit={handlePagar}>
             <div className="flex flex-col lg:flex-row gap-7.5 xl:gap-11">
               {/* <!-- checkout left --> */}
               <div className="lg:max-w-[670px] w-full">
-                {/* <!-- login box --> */}
-                <Login />
 
                 {/* <!-- billing details --> */}
                 <Billing />
