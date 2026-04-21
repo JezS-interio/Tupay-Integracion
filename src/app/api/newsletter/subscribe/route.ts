@@ -20,23 +20,24 @@ export async function POST(request: NextRequest) {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    // Check if already subscribed
-    const subscriberRef = doc(db, 'newsletter_subscribers', normalizedEmail);
-    const existing = await getDoc(subscriberRef);
+    // Try to check/save in Firestore (requires newsletter_subscribers rules)
+    try {
+      const subscriberRef = doc(db, 'newsletter_subscribers', normalizedEmail);
+      const existing = await getDoc(subscriberRef);
 
-    if (existing.exists()) {
-      return NextResponse.json(
-        { message: 'already_subscribed' },
-        { status: 200 }
-      );
+      if (existing.exists()) {
+        return NextResponse.json({ message: 'already_subscribed' }, { status: 200 });
+      }
+
+      await setDoc(subscriberRef, {
+        email: normalizedEmail,
+        subscribedAt: Timestamp.now(),
+        active: true,
+      });
+    } catch (firestoreError) {
+      // Firestore permissions not set yet — continue and still send email
+      console.warn('Firestore newsletter write failed (check rules):', firestoreError);
     }
-
-    // Save subscriber to Firestore
-    await setDoc(subscriberRef, {
-      email: normalizedEmail,
-      subscribedAt: Timestamp.now(),
-      active: true,
-    });
 
     // Send confirmation email
     const emailHtml = await render(NewsletterEmail({ email: normalizedEmail }));

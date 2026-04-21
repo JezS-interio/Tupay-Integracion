@@ -31,5 +31,10 @@ service cloud.firestore {
       allow create: if request.auth != null;
       allow update: if request.auth != null && resource.data.userId == request.auth.uid;
     }
+
+    // Newsletter subscribers - allow anyone to subscribe (server-side write)
+    match /newsletter_subscribers/{email} {
+      allow read, write: if true;
+    }
   }
 }
