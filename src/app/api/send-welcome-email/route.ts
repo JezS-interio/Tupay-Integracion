@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const emailHtml = await render(WelcomeEmail({ userName, verificationUrl }));
 
     const { data, error } = await resend.emails.send({
-      from: 'IntiTech <onboarding@resend.dev>', // Change this to your verified domain
+      from: 'IntiTech <noreply@intitechcorp.com>',
       to: [email],
       subject: 'Welcome to IntiTech!',
       html: emailHtml,

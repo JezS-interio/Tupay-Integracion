@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     );
 
     const { data, error } = await resend.emails.send({
-      from: 'IntiTech <onboarding@resend.dev>', // Change this to your verified domain
+      from: 'IntiTech <noreply@intitechcorp.com>',
       to: [email],
       subject: 'You left items in your cart!',
       html: emailHtml,

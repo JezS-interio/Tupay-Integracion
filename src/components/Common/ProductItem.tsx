@@ -55,14 +55,14 @@ const ProductItem = ({ item }: { item: Product }) => {
 
   return (
     <div className="group">
-      <div className="relative overflow-hidden flex items-center justify-center rounded-lg bg-[#F6F7FB] min-h-[270px] mb-4">
-        <Link href={`/shop-details?id=${item.id}`}>
+      <div className="relative overflow-hidden flex items-center justify-center rounded-lg bg-[#F6F7FB] h-[270px] mb-4">
+        <Link href={`/shop-details?id=${item.id}`} className="w-full h-full flex items-center justify-center p-4">
           <Image
             src={imgError ? placeholderSvg : imageUrl}
             alt={item.title}
             width={250}
             height={250}
-            className="cursor-pointer object-contain"
+            className="cursor-pointer object-contain max-h-[220px] w-auto"
             unoptimized
             onError={() => setImgError(true)}
           />
