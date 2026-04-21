@@ -30,8 +30,9 @@ const SingleItem = ({ item }) => {
   const imageUrl = item.imgs?.previews?.[0] || item.imgs?.thumbnails?.[0] || item.img || "/images/placeholder.png";
 
   return (
-    <div className="flex items-center border-t border-gray-3 py-5 px-10">
-      <div className="min-w-[83px]">
+    <div className="flex items-center border-t border-gray-3 py-5 px-4 sm:px-10 gap-4">
+      {/* Remove button */}
+      <div className="flex-shrink-0">
         <button
           onClick={() => handleRemoveFromWishlist()}
           aria-label="button for remove product from wishlist"
@@ -59,30 +60,26 @@ const SingleItem = ({ item }) => {
         </button>
       </div>
 
-      <div className="min-w-[487px]">
-        <div className="flex items-center justify-between gap-5">
-          <div className="w-full flex items-center gap-5.5">
-            <div className="flex items-center justify-center rounded-[5px] bg-gray-2 max-w-[80px] w-full h-17.5">
-              <Image src={imageUrl} alt={item.title} width={200} height={200} />
-            </div>
-
-            <div>
-              <h3 className="text-dark ease-out duration-200 hover:text-blue">
-                <a href="#"> {item.title} </a>
-              </h3>
-            </div>
-          </div>
+      {/* Image + Name */}
+      <div className="flex items-center gap-4 flex-1 min-w-0">
+        <div className="flex-shrink-0 flex items-center justify-center rounded-[5px] bg-gray-2 w-[80px] h-[70px]">
+          <Image src={imageUrl} alt={item.title} width={70} height={70} className="object-contain" unoptimized />
         </div>
+        <h3 className="text-dark ease-out duration-200 hover:text-blue line-clamp-2 text-sm">
+          <a href="#">{item.title}</a>
+        </h3>
       </div>
 
-      <div className="min-w-[305px]">
-        <p className="text-dark">S/ {item.discountedPrice.toFixed(2)}</p>
+      {/* Price */}
+      <div className="flex-shrink-0 w-[120px] text-right">
+        <p className="text-dark whitespace-nowrap">S/ {item.discountedPrice.toFixed(2)}</p>
       </div>
 
-      <div className="min-w-[170px] flex justify-end">
+      {/* Add to cart */}
+      <div className="flex-shrink-0 flex justify-end">
         <button
           onClick={() => handleAddToCart()}
-          className="inline-flex items-center justify-center w-[170px] text-dark hover:text-white bg-gray-1 border border-gray-3 py-2.5 px-6 rounded-md ease-out duration-200 hover:bg-blue hover:border-gray-3 whitespace-nowrap"
+          className="inline-flex items-center justify-center w-[160px] text-dark hover:text-white bg-gray-1 border border-gray-3 py-2.5 px-4 rounded-md ease-out duration-200 hover:bg-blue hover:border-gray-3 whitespace-nowrap text-sm"
         >
           Agregar al Carrito
         </button>

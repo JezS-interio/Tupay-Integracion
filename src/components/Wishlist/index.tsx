@@ -41,20 +41,20 @@ export const Wishlist = () => {
 
           <div className="bg-white rounded-[10px] shadow-1">
             <div className="w-full overflow-x-auto">
-              <div className="min-w-[1170px]">
+              <div className="w-full">
                 {/* <!-- table header --> */}
-                <div className="flex items-center py-5.5 px-10">
-                  <div className="min-w-[83px]"></div>
-                  <div className="min-w-[487px]">
+                <div className="flex items-center py-5.5 px-4 sm:px-10 gap-4">
+                  <div className="flex-shrink-0 w-[38px]"></div>
+                  <div className="flex-1 min-w-0">
                     <p className="text-dark">Producto</p>
                   </div>
 
-                  <div className="min-w-[305px]">
+                  <div className="flex-shrink-0 w-[120px] text-right">
                     <p className="text-dark">Precio Unitario</p>
                   </div>
 
-                  <div className="min-w-[150px]">
-                    <p className="text-dark text-right">Acción</p>
+                  <div className="flex-shrink-0 w-[160px] text-right">
+                    <p className="text-dark">Acción</p>
                   </div>
                 </div>
 
