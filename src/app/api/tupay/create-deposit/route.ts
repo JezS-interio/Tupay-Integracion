@@ -27,8 +27,10 @@ export async function POST(request: NextRequest) {
     } = body;
 
     if (!orderId || !amount || !firstName || !lastName || !email || !document) {
+      const missing = { orderId: !orderId, amount: !amount, firstName: !firstName, lastName: !lastName, email: !email, document: !document };
+      console.error('TuPay create-deposit missing fields:', missing, 'body:', body);
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields', missing },
         { status: 400 }
       );
     }
