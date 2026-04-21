@@ -5,11 +5,18 @@ import Image from "next/image";
 import AddressModal from "./AddressModal";
 import Orders from "../Orders";
 import { useAuth } from "@/app/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 const MyAccount = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [addressModal, setAddressModal] = useState(false);
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/signin");
+  };
 
   const openAddressModal = () => {
     setAddressModal(true);
@@ -201,7 +208,7 @@ const MyAccount = () => {
                     </button>
 
                     <button
-                      onClick={() => setActiveTab("logout")}
+                      onClick={handleLogout}
                       className={`flex items-center rounded-md gap-2.5 py-3 px-4.5 ease-out duration-200 hover:bg-blue hover:text-white ${
                         activeTab === "logout"
                           ? "text-white bg-blue"

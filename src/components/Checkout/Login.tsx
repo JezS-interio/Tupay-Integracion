@@ -1,7 +1,31 @@
+"use client";
 import React, { useState } from "react";
+import { useAuth } from "@/app/context/AuthContext";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [dropdown, setDropdown] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) return;
+    setLoading(true);
+    try {
+      await login(email, password);
+      toast.success("¡Sesión iniciada!");
+      setDropdown(false);
+    } catch {
+      toast.error("Correo o contraseña incorrectos");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-white shadow-1 rounded-[10px]">
@@ -44,39 +68,48 @@ const Login = () => {
           Si no has iniciado sesión, por favor inicia sesión primero.
         </p>
 
+        <form onSubmit={handleSubmit}>
         <div className="mb-5">
-          <label htmlFor="name" className="block mb-2.5">
-            Usuario o Correo Electrónico
+          <label htmlFor="checkout-email" className="block mb-2.5">
+            Correo Electrónico
           </label>
 
           <input
-            type="text"
-            name="name"
-            id="name"
-            className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
+            type="email"
+            id="checkout-email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            disabled={loading}
+            className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20 disabled:opacity-50"
           />
         </div>
 
         <div className="mb-5">
-          <label htmlFor="password" className="block mb-2.5">
+          <label htmlFor="checkout-password" className="block mb-2.5">
             Contraseña
           </label>
 
           <input
             type="password"
-            name="password"
-            id="password"
-            autoComplete="on"
-            className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
+            id="checkout-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            required
+            disabled={loading}
+            className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20 disabled:opacity-50"
           />
         </div>
 
         <button
           type="submit"
-          className="inline-flex font-medium text-white bg-blue py-3 px-10.5 rounded-md ease-out duration-200 hover:bg-blue-dark"
+          disabled={loading}
+          className="inline-flex font-medium text-white bg-blue py-3 px-10.5 rounded-md ease-out duration-200 hover:bg-blue-dark disabled:opacity-60"
         >
-          Iniciar Sesión
+          {loading ? "Iniciando..." : "Iniciar Sesión"}
         </button>
+        </form>
       </div>
     </div>
   );
