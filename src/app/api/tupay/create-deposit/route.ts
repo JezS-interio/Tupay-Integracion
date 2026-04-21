@@ -8,6 +8,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { tupayFetch } from '@/lib/tupay-fetch';
 
+// Cache the detected clock offset so subsequent requests skip the retry round-trip
+let cachedClockOffsetMs: number | null = null;
+
+function getTupayDate(offsetMs: number = 0): string {
+  const manualOffsetSec = process.env.TUPAY_DATE_OFFSET_SECONDS
+    ? parseInt(process.env.TUPAY_DATE_OFFSET_SECONDS, 10)
+    : null;
+  const ms = manualOffsetSec !== null && !isNaN(manualOffsetSec)
+    ? Date.now() + manualOffsetSec * 1000
+    : Date.now() + offsetMs;
+  return new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z');
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -78,7 +91,8 @@ export async function POST(request: NextRequest) {
       };
     };
 
-    let xDate = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+    // Use cached offset to skip the first failing round-trip on warm instances
+    let xDate = getTupayDate(cachedClockOffsetMs ?? 0);
     const idempotencyKey = crypto.randomUUID();
 
     let response = await tupayFetch(`${baseUrl}/v3/deposits`, {
@@ -92,16 +106,14 @@ export async function POST(request: NextRequest) {
       const bodyClone = await response.clone().json().catch(() => null);
       if (bodyClone?.code === 103 || bodyClone?.type === 'INVALID_DATE_RANGE') {
         const serverDateHeader = response.headers.get('date');
-        // Manual override via env var takes priority (e.g. TUPAY_DATE_OFFSET_SECONDS="-63113904" for ~-2 years)
-        const manualOffsetSec = process.env.TUPAY_DATE_OFFSET_SECONDS ? parseInt(process.env.TUPAY_DATE_OFFSET_SECONDS, 10) : null;
-        if (manualOffsetSec !== null && !isNaN(manualOffsetSec)) {
-          xDate = new Date(Date.now() + manualOffsetSec * 1000).toISOString().replace(/\.\d{3}Z$/, 'Z');
-          console.log('[TuPay] using manual date offset:', manualOffsetSec, 's → xDate:', xDate);
+        if (process.env.TUPAY_DATE_OFFSET_SECONDS) {
+          // manual override already handled by getTupayDate — nothing to update
+          console.log('[TuPay] INVALID_DATE_RANGE with manual offset, retrying as-is');
         } else if (serverDateHeader) {
           const serverTime = new Date(serverDateHeader).getTime();
-          const offsetMs = serverTime - Date.now();
-          xDate = new Date(Date.now() + offsetMs).toISOString().replace(/\.\d{3}Z$/, 'Z');
-          console.log('[TuPay] clock skew from Date header, retrying with:', xDate, '(offset ms:', offsetMs, ')');
+          cachedClockOffsetMs = serverTime - Date.now();
+          xDate = getTupayDate(cachedClockOffsetMs);
+          console.log('[TuPay] clock skew from Date header, offset ms:', cachedClockOffsetMs, '→ xDate:', xDate);
         } else {
           console.warn('[TuPay] INVALID_DATE_RANGE but no Date header or manual offset — retry may fail');
         }

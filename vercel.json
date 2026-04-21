@@ -4,5 +4,13 @@
       "path": "/api/cron/send-abandoned-cart-emails",
       "schedule": "0 0 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "src/app/api/tupay/create-deposit/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/tupay/webhook/route.ts": {
+      "maxDuration": 60
+    }
+  }
 }
