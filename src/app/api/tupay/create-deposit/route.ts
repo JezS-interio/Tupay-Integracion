@@ -6,20 +6,7 @@ if (process.env.TUPAY_ENVIRONMENT !== 'production') {
 
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { tupayFetch } from '@/lib/tupay-fetch';
-
-// Cache the detected clock offset so subsequent requests skip the retry round-trip
-let cachedClockOffsetMs: number | null = null;
-
-function getTupayDate(offsetMs: number = 0): string {
-  const manualOffsetSec = process.env.TUPAY_DATE_OFFSET_SECONDS
-    ? parseInt(process.env.TUPAY_DATE_OFFSET_SECONDS, 10)
-    : null;
-  const ms = manualOffsetSec !== null && !isNaN(manualOffsetSec)
-    ? Date.now() + manualOffsetSec * 1000
-    : Date.now() + offsetMs;
-  return new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z');
-}
+import { tupayFetch, syncTupayServerTime, getTupayClockOffsetMs, setTupayClockOffsetMs, buildTupayDate } from '@/lib/tupay-fetch';
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,7 +39,9 @@ export async function POST(request: NextRequest) {
     const apiSignature = process.env.TUPAY_API_SIGNATURE!;
     const baseUrl = process.env.TUPAY_BASE_URL!;
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.headers.get('origin') || 'https://www.intitechcorp.com';
-    const isStaging = process.env.TUPAY_ENVIRONMENT !== 'production';
+
+    // Sync server clock on cold start — cheap HEAD request avoids a failing deposit round-trip
+    await syncTupayServerTime(baseUrl);
 
     const payload = {
       country: 'PE',
@@ -91,8 +80,7 @@ export async function POST(request: NextRequest) {
       };
     };
 
-    // Use cached offset to skip the first failing round-trip on warm instances
-    let xDate = getTupayDate(cachedClockOffsetMs ?? 0);
+    let xDate = buildTupayDate(getTupayClockOffsetMs() ?? 0);
     const idempotencyKey = crypto.randomUUID();
 
     let response = await tupayFetch(`${baseUrl}/v3/deposits`, {
@@ -101,21 +89,17 @@ export async function POST(request: NextRequest) {
       body: jsonPayload,
     });
 
-    // If TuPay rejects due to clock skew, correct using the server's Date header and retry once
+    // Safety net: if clock skew still happens (e.g. HEAD probe didn't return Date header),
+    // correct from the response and retry once
     if (response.status === 400) {
       const bodyClone = await response.clone().json().catch(() => null);
       if (bodyClone?.code === 103 || bodyClone?.type === 'INVALID_DATE_RANGE') {
         const serverDateHeader = response.headers.get('date');
-        if (process.env.TUPAY_DATE_OFFSET_SECONDS) {
-          // manual override already handled by getTupayDate — nothing to update
-          console.log('[TuPay] INVALID_DATE_RANGE with manual offset, retrying as-is');
-        } else if (serverDateHeader) {
-          const serverTime = new Date(serverDateHeader).getTime();
-          cachedClockOffsetMs = serverTime - Date.now();
-          xDate = getTupayDate(cachedClockOffsetMs);
-          console.log('[TuPay] clock skew from Date header, offset ms:', cachedClockOffsetMs, '→ xDate:', xDate);
-        } else {
-          console.warn('[TuPay] INVALID_DATE_RANGE but no Date header or manual offset — retry may fail');
+        if (!process.env.TUPAY_DATE_OFFSET_SECONDS && serverDateHeader) {
+          const offsetMs = new Date(serverDateHeader).getTime() - Date.now();
+          setTupayClockOffsetMs(offsetMs);
+          xDate = buildTupayDate(offsetMs);
+          console.log('[TuPay] fallback clock correction, offset ms:', offsetMs, '→ xDate:', xDate);
         }
         const retryIdempotencyKey = crypto.randomUUID();
         response = await tupayFetch(`${baseUrl}/v3/deposits`, {
