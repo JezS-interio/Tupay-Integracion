@@ -104,27 +104,31 @@ const Pagar = () => {
         const firstName = nameParts[0] || 'Cliente';
         const lastName = nameParts.slice(1).join(' ') || 'Cliente';
 
+        const tupayPayload = {
+          orderId,
+          amount: total.toFixed(2),
+          currency: 'PEN',
+          firstName,
+          lastName,
+          email: shippingAddress.email,
+          document: payerDocument.trim(),
+          documentType,
+          phone: shippingAddress.phone || undefined,
+        };
+        console.log('TuPay payload:', tupayPayload);
+
         const tupayRes = await fetch('/api/tupay/create-deposit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            orderId,
-            amount: total.toFixed(2),
-            currency: 'PEN',
-            firstName,
-            lastName,
-            email: shippingAddress.email,
-            document: payerDocument.trim(),
-            documentType,
-            phone: shippingAddress.phone || undefined,
-          }),
+          body: JSON.stringify(tupayPayload),
         });
 
         const tupayData = await tupayRes.json();
 
         if (!tupayRes.ok || !tupayData.redirect_url) {
           console.error('TuPay error:', tupayData);
-          toast.error(tupayData.error || 'Error al iniciar el pago con TuPay. Intenta de nuevo.');
+          const missingFields = tupayData.missing ? Object.keys(tupayData.missing).filter((k) => tupayData.missing[k]).join(', ') : '';
+          toast.error(missingFields ? `Faltan campos: ${missingFields}` : tupayData.error || 'Error al iniciar el pago con TuPay. Intenta de nuevo.');
           setLoading(false);
           return;
         }
