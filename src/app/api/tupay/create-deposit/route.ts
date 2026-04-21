@@ -92,13 +92,18 @@ export async function POST(request: NextRequest) {
       const bodyClone = await response.clone().json().catch(() => null);
       if (bodyClone?.code === 103 || bodyClone?.type === 'INVALID_DATE_RANGE') {
         const serverDateHeader = response.headers.get('date');
-        if (serverDateHeader) {
+        // Manual override via env var takes priority (e.g. TUPAY_DATE_OFFSET_SECONDS="-63113904" for ~-2 years)
+        const manualOffsetSec = process.env.TUPAY_DATE_OFFSET_SECONDS ? parseInt(process.env.TUPAY_DATE_OFFSET_SECONDS, 10) : null;
+        if (manualOffsetSec !== null && !isNaN(manualOffsetSec)) {
+          xDate = new Date(Date.now() + manualOffsetSec * 1000).toISOString().replace(/\.\d{3}Z$/, 'Z');
+          console.log('[TuPay] using manual date offset:', manualOffsetSec, 's → xDate:', xDate);
+        } else if (serverDateHeader) {
           const serverTime = new Date(serverDateHeader).getTime();
           const offsetMs = serverTime - Date.now();
           xDate = new Date(Date.now() + offsetMs).toISOString().replace(/\.\d{3}Z$/, 'Z');
-          console.log('[TuPay] clock skew detected, retrying with server date:', xDate, '(offset ms:', offsetMs, ')');
+          console.log('[TuPay] clock skew from Date header, retrying with:', xDate, '(offset ms:', offsetMs, ')');
         } else {
-          console.warn('[TuPay] INVALID_DATE_RANGE but no Date header to correct from');
+          console.warn('[TuPay] INVALID_DATE_RANGE but no Date header or manual offset — retry may fail');
         }
         const retryIdempotencyKey = crypto.randomUUID();
         response = await tupayFetch(`${baseUrl}/v3/deposits`, {
