@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { tupayFetch } from '@/lib/tupay-fetch';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+const OWNER_EMAIL = process.env.OWNER_EMAIL || 'testt31@outlook.com';
 
 export async function POST(request: NextRequest) {
   try {
@@ -80,6 +84,41 @@ export async function POST(request: NextRequest) {
 
     if (!firestoreRes.ok) {
       console.error('Firestore update failed:', await firestoreRes.text());
+    }
+
+    // Send owner notification email when payment is completed
+    if (status === 'COMPLETED') {
+      try {
+        // Fetch full order data from Firestore
+        const orderUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/orders/${invoice_id}?key=${firebaseApiKey}`;
+        const orderRes = await fetch(orderUrl);
+        let orderHtml = `<p>Orden <strong>${invoice_id}</strong> pagada via TuPay (deposit: ${deposit_id}).</p>`;
+
+        if (orderRes.ok) {
+          const orderDoc = await orderRes.json();
+          const f = orderDoc.fields || {};
+          const customerName = f.shippingAddress?.mapValue?.fields?.fullName?.stringValue || 'Cliente';
+          const customerEmail = f.shippingAddress?.mapValue?.fields?.email?.stringValue || '';
+          const total = f.total?.doubleValue || f.total?.integerValue || '';
+          orderHtml = `
+            <h2>¡Nuevo pago confirmado!</h2>
+            <p><strong>Orden:</strong> ${invoice_id}</p>
+            <p><strong>Cliente:</strong> ${customerName}${customerEmail ? ` (${customerEmail})` : ''}</p>
+            ${total ? `<p><strong>Total:</strong> S/ ${Number(total).toFixed(2)}</p>` : ''}
+            <p><strong>Método:</strong> TuPay</p>
+            <p><strong>Deposit ID:</strong> ${deposit_id}</p>
+          `;
+        }
+
+        await resend.emails.send({
+          from: 'IntiTech <orders@intitechcorp.com>',
+          to: [OWNER_EMAIL],
+          subject: `✅ Pago confirmado - Orden ${invoice_id}`,
+          html: orderHtml,
+        });
+      } catch (emailErr) {
+        console.error('Failed to send owner notification email:', emailErr);
+      }
     }
 
     return NextResponse.json({ received: true });

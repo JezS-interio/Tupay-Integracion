@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     const apiKey = process.env.TUPAY_API_KEY!;
     const apiSignature = process.env.TUPAY_API_SIGNATURE!;
     const baseUrl = process.env.TUPAY_BASE_URL!;
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.headers.get('origin') || 'https://tupay-integracion.vercel.app';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.headers.get('origin') || 'https://www.intitechcorp.com';
     const isStaging = process.env.TUPAY_ENVIRONMENT !== 'production';
 
     const payload = {
