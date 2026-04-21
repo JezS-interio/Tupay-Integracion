@@ -88,17 +88,18 @@ export async function POST(request: NextRequest) {
       body: jsonPayload,
     });
 
-    // Safety net: if clock skew still happens (e.g. HEAD probe didn't return Date header),
-    // correct from the response and retry once
+    // Safety net: always correct from server's Date header on INVALID_DATE_RANGE and retry once
     if (response.status === 400) {
       const bodyClone = await response.clone().json().catch(() => null);
       if (bodyClone?.code === 103 || bodyClone?.type === 'INVALID_DATE_RANGE') {
         const serverDateHeader = response.headers.get('date');
-        if (!process.env.TUPAY_DATE_OFFSET_SECONDS && serverDateHeader) {
+        if (serverDateHeader) {
           const offsetMs = new Date(serverDateHeader).getTime() - Date.now();
           setTupayClockOffsetMs(offsetMs);
-          xDate = buildTupayDate(offsetMs);
-          console.log('[TuPay] fallback clock correction, offset ms:', offsetMs, '→ xDate:', xDate);
+          xDate = new Date(Date.now() + offsetMs).toISOString().replace(/\.\d{3}Z$/, 'Z');
+          console.log('[TuPay] INVALID_DATE_RANGE — corrected to server date:', xDate, '(offset ms:', offsetMs, ')');
+        } else {
+          console.warn('[TuPay] INVALID_DATE_RANGE but no Date header in response');
         }
         const retryIdempotencyKey = crypto.randomUUID();
         response = await tupayFetch(`${baseUrl}/v3/deposits`, {
