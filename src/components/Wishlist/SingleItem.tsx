@@ -79,10 +79,10 @@ const SingleItem = ({ item }) => {
         <p className="text-dark">S/ {item.discountedPrice.toFixed(2)}</p>
       </div>
 
-      <div className="min-w-[150px] flex justify-end">
+      <div className="min-w-[170px] flex justify-end">
         <button
           onClick={() => handleAddToCart()}
-          className="inline-flex text-dark hover:text-white bg-gray-1 border border-gray-3 py-2.5 px-6 rounded-md ease-out duration-200 hover:bg-blue hover:border-gray-3"
+          className="inline-flex items-center justify-center w-[170px] text-dark hover:text-white bg-gray-1 border border-gray-3 py-2.5 px-6 rounded-md ease-out duration-200 hover:bg-blue hover:border-gray-3 whitespace-nowrap"
         >
           Agregar al Carrito
         </button>
