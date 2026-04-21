@@ -66,25 +66,48 @@ export async function POST(request: NextRequest) {
 
     const jsonPayload = JSON.stringify(payload);
 
-    const xDate = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
-    const idempotencyKey = crypto.randomUUID();
-
-    const signatureInput = xDate + apiKey + jsonPayload;
-    const hmac = crypto.createHmac('sha256', apiSignature);
-    hmac.update(signatureInput);
-    const authHash = hmac.digest('hex');
-
-    const response = await tupayFetch(`${baseUrl}/v3/deposits`, {
-      method: 'POST',
-      headers: {
+    const buildHeaders = (date: string, key: string) => {
+      const sig = crypto.createHmac('sha256', apiSignature);
+      sig.update(date + apiKey + jsonPayload);
+      return {
         'Content-Type': 'application/json',
         'X-Login': apiKey,
-        'X-Date': xDate,
-        'Authorization': `TUPAY ${authHash}`,
-        'X-Idempotency-Key': idempotencyKey,
-      },
+        'X-Date': date,
+        'Authorization': `TUPAY ${sig.digest('hex')}`,
+        'X-Idempotency-Key': key,
+      };
+    };
+
+    let xDate = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+    const idempotencyKey = crypto.randomUUID();
+
+    let response = await tupayFetch(`${baseUrl}/v3/deposits`, {
+      method: 'POST',
+      headers: buildHeaders(xDate, idempotencyKey),
       body: jsonPayload,
     });
+
+    // If TuPay rejects due to clock skew, correct using the server's Date header and retry once
+    if (response.status === 400) {
+      const bodyClone = await response.clone().json().catch(() => null);
+      if (bodyClone?.code === 103 || bodyClone?.type === 'INVALID_DATE_RANGE') {
+        const serverDateHeader = response.headers.get('date');
+        if (serverDateHeader) {
+          const serverTime = new Date(serverDateHeader).getTime();
+          const offsetMs = serverTime - Date.now();
+          xDate = new Date(Date.now() + offsetMs).toISOString().replace(/\.\d{3}Z$/, 'Z');
+          console.log('[TuPay] clock skew detected, retrying with server date:', xDate, '(offset ms:', offsetMs, ')');
+        } else {
+          console.warn('[TuPay] INVALID_DATE_RANGE but no Date header to correct from');
+        }
+        const retryIdempotencyKey = crypto.randomUUID();
+        response = await tupayFetch(`${baseUrl}/v3/deposits`, {
+          method: 'POST',
+          headers: buildHeaders(xDate, retryIdempotencyKey),
+          body: jsonPayload,
+        });
+      }
+    }
 
     const tupayData = await response.json();
 
