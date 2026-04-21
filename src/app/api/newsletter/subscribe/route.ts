@@ -1,8 +1,6 @@
 import { Resend } from 'resend';
 import { NextRequest, NextResponse } from 'next/server';
 import { render } from '@react-email/render';
-import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
 import NewsletterEmail from '@/emails/NewsletterEmail';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -20,34 +18,20 @@ export async function POST(request: NextRequest) {
 
     const normalizedEmail = email.toLowerCase().trim();
 
-    // Try to check/save in Firestore (requires newsletter_subscribers rules)
-    try {
-      const subscriberRef = doc(db, 'newsletter_subscribers', normalizedEmail);
-      const existing = await getDoc(subscriberRef);
-
-      if (existing.exists()) {
-        return NextResponse.json({ message: 'already_subscribed' }, { status: 200 });
-      }
-
-      await setDoc(subscriberRef, {
-        email: normalizedEmail,
-        subscribedAt: Timestamp.now(),
-        active: true,
-      });
-    } catch (firestoreError) {
-      // Firestore permissions not set yet — continue and still send email
-      console.warn('Firestore newsletter write failed (check rules):', firestoreError);
-    }
-
-    // Send confirmation email
+    // Send confirmation email via Resend
     const emailHtml = await render(NewsletterEmail({ email: normalizedEmail }));
 
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: 'IntiTech <onboarding@resend.dev>',
       to: [normalizedEmail],
       subject: '¡Suscripción confirmada! Bienvenido a IntiTech',
       html: emailHtml,
     });
+
+    if (error) {
+      console.error('Resend error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
     return NextResponse.json({ message: 'subscribed' }, { status: 200 });
   } catch (error: any) {
