@@ -72,9 +72,7 @@ export async function tupayFetch(
   url: string,
   options: Parameters<typeof fetch>[1] = {}
 ): Promise<Response> {
-  // Only use proxy in production — staging doesn't require IP whitelisting
-  // and the proxy adds significant latency (~30s) that causes Vercel timeouts
-  const proxyUrl = process.env.TUPAY_ENVIRONMENT === 'production' ? process.env.PROXY_URL : undefined;
+  const proxyUrl = process.env.PROXY_URL;
 
   if (proxyUrl) {
     // Create a fresh ProxyAgent per request to avoid stale connections
