@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
 
     const jsonPayload = JSON.stringify(payload);
 
-    const xDate = new Date().toISOString();
+    const xDate = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
     const idempotencyKey = crypto.randomUUID();
 
     const signatureInput = xDate + apiKey + jsonPayload;
