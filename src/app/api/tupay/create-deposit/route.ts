@@ -1,4 +1,6 @@
 export const runtime = 'nodejs';
+export const maxDuration = 60; // seconds — required for Next.js App Router
+
 // Bypass SSL for TuPay staging environment
 if (process.env.TUPAY_ENVIRONMENT !== 'production') {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -6,7 +8,7 @@ if (process.env.TUPAY_ENVIRONMENT !== 'production') {
 
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
-import { tupayFetch, syncTupayServerTime, getTupayClockOffsetMs, setTupayClockOffsetMs, buildTupayDate } from '@/lib/tupay-fetch';
+import { tupayFetch, getTupayClockOffsetMs, setTupayClockOffsetMs, buildTupayDate } from '@/lib/tupay-fetch';
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,9 +41,6 @@ export async function POST(request: NextRequest) {
     const apiSignature = process.env.TUPAY_API_SIGNATURE!;
     const baseUrl = process.env.TUPAY_BASE_URL!;
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || request.headers.get('origin') || 'https://www.intitechcorp.com';
-
-    // Sync server clock on cold start — cheap HEAD request avoids a failing deposit round-trip
-    await syncTupayServerTime(baseUrl);
 
     const payload = {
       country: 'PE',
@@ -118,6 +117,12 @@ export async function POST(request: NextRequest) {
         { error: tupayData.message || 'TuPay API error', details: tupayData },
         { status: response.status }
       );
+    }
+
+    // Cache server clock offset from successful response for future warm-instance requests
+    const successDate = response.headers.get('date');
+    if (successDate && getTupayClockOffsetMs() === null && !process.env.TUPAY_DATE_OFFSET_SECONDS) {
+      setTupayClockOffsetMs(new Date(successDate).getTime() - Date.now());
     }
 
     return NextResponse.json({
