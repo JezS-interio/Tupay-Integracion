@@ -68,6 +68,16 @@ export async function syncTupayServerTime(baseUrl: string): Promise<void> {
   }
 }
 
+// Cache the ProxyAgent instance — creating a new one per request adds significant overhead
+let _proxyAgent: ProxyAgent | null = null;
+function getProxyAgent(proxyUrl: string): ProxyAgent {
+  if (!_proxyAgent) {
+    _proxyAgent = new ProxyAgent({ uri: proxyUrl, keepAliveTimeout: 30_000, keepAliveMaxTimeout: 60_000 });
+    console.log('[TuPay] ProxyAgent created for', proxyUrl.replace(/:[^:@]+@/, ':***@'));
+  }
+  return _proxyAgent;
+}
+
 export async function tupayFetch(
   url: string,
   options: Parameters<typeof fetch>[1] = {}
@@ -75,8 +85,7 @@ export async function tupayFetch(
   const proxyUrl = process.env.PROXY_URL;
 
   if (proxyUrl) {
-    // Create a fresh ProxyAgent per request to avoid stale connections
-    const dispatcher = new ProxyAgent(proxyUrl);
+    const dispatcher = getProxyAgent(proxyUrl);
     const res = await undiciFetch(url, {
       ...(options as object),
       dispatcher,
