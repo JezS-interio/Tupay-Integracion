@@ -14,27 +14,19 @@
 
 import { ProxyAgent, fetch as undiciFetch } from 'undici';
 
-let _dispatcher: ProxyAgent | undefined;
-
-function getDispatcher(): ProxyAgent | undefined {
-  const proxyUrl = process.env.PROXY_URL;
-  if (!proxyUrl) return undefined;
-
-  // Reuse the agent across requests within the same serverless instance
-  if (!_dispatcher) {
-    _dispatcher = new ProxyAgent(proxyUrl);
-  }
-  return _dispatcher;
-}
-
 export async function tupayFetch(
   url: string,
   options: Parameters<typeof fetch>[1] = {}
 ): Promise<Response> {
-  const dispatcher = getDispatcher();
+  const proxyUrl = process.env.PROXY_URL;
 
-  if (dispatcher) {
-    // undici fetch accepts a dispatcher; cast result to standard Response
+  if (proxyUrl) {
+    // Create a fresh ProxyAgent per request to avoid stale connections
+    const dispatcher = new ProxyAgent(proxyUrl);
+    const xDate = (options as Record<string, unknown>).headers
+      ? ((options as Record<string, unknown>).headers as Record<string, string>)['X-Date']
+      : undefined;
+    console.log('[tupayFetch] sending via proxy, X-Date:', xDate, 'now:', new Date().toISOString());
     const res = await undiciFetch(url, {
       ...(options as object),
       dispatcher,
