@@ -21,11 +21,15 @@ export async function POST(request: NextRequest) {
     // Send confirmation email via Resend
     const emailHtml = await render(NewsletterEmail({ email: normalizedEmail }));
 
+    // In test mode Resend only allows sending to the account owner email.
+    // We notify the store owner instead until a domain is verified.
+    const ownerEmail = process.env.RESEND_OWNER_EMAIL || 'testt31@outlook.com';
+
     const { error } = await resend.emails.send({
       from: 'IntiTech <onboarding@resend.dev>',
-      to: [normalizedEmail],
-      subject: '¡Suscripción confirmada! Bienvenido a IntiTech',
-      html: emailHtml,
+      to: [ownerEmail],
+      subject: `Nuevo suscriptor: ${normalizedEmail}`,
+      html: `<p>El correo <strong>${normalizedEmail}</strong> se suscribió al newsletter de IntiTech.</p>`,
     });
 
     if (error) {
