@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     const firebaseApiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY!;
 
     // Query TuPay for current deposit status
-    const xDate = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+    const xDate = new Date().toISOString();
     const hmac = crypto.createHmac('sha256', apiSignature);
     hmac.update(xDate + apiKey);
     const authHash = hmac.digest('hex');
