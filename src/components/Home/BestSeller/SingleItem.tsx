@@ -48,8 +48,8 @@ const SingleItem = ({ item }: { item: Product }) => {
   const imageUrl = validPreviews?.[0] || item.img || placeholderSvg;
 
   return (
-    <div className="group">
-      <div className="relative overflow-hidden rounded-lg bg-[#F6F7FB]">
+    <div className="group h-full">
+      <div className="relative overflow-hidden rounded-lg bg-[#F6F7FB] h-full flex flex-col">
         <Link href={`/shop-details?id=${item.id}`}>
           <div className="flex justify-center items-center h-[160px] px-3 pt-3 cursor-pointer">
             <Image
@@ -63,7 +63,7 @@ const SingleItem = ({ item }: { item: Product }) => {
           </div>
         </Link>
 
-        <div className="text-center px-3 pt-2 pb-3">
+        <div className="text-center px-3 pt-2 pb-3 flex-1 flex flex-col justify-between">
           <div className="flex items-center justify-center gap-1.5 mb-1">
             <div className="flex items-center gap-0.5">
               <Image

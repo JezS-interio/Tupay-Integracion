@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import SingleOrder from "./SingleOrder";
 import { useAuth } from "@/app/context/AuthContext";
 import { Order } from "@/types/order";
-import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 
 const Orders = () => {
@@ -16,11 +16,10 @@ const Orders = () => {
       return;
     }
 
-    // Real-time listener — updates instantly when webhook changes paymentStatus
+    // Real-time listener — no orderBy to avoid requiring composite index
     const q = query(
       collection(db, "orders"),
-      where("userId", "==", user.uid),
-      orderBy("createdAt", "desc")
+      where("userId", "==", user.uid)
     );
 
     const unsubscribe = onSnapshot(
@@ -28,10 +27,15 @@ const Orders = () => {
       (snapshot) => {
         const data: Order[] = [];
         snapshot.forEach((doc) => data.push(doc.data() as Order));
+        // Sort client-side by date desc
+        data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         setOrders(data);
         setLoading(false);
       },
-      () => setLoading(false)
+      (err) => {
+        console.error("Orders snapshot error:", err);
+        setLoading(false);
+      }
     );
 
     return () => unsubscribe();

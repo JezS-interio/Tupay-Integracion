@@ -335,11 +335,11 @@ const MyAccount = () => {
 
           <!-- addresses tab content start --> */}
             <div
-              className={`${
+              className={`xl:max-w-[770px] w-full ${
                 activeTab === "addresses" ? "block" : "hidden"
               }`}
             >
-              <div className="xl:max-w-[770px] w-full bg-white shadow-1 rounded-xl">
+              <div className="w-full bg-white shadow-1 rounded-xl">
                 <div className="flex items-center justify-between py-5 px-4 sm:pl-7.5 sm:pr-6 border-b border-gray-3">
                   <p className="font-medium text-xl text-dark">
                     Dirección de Envío
