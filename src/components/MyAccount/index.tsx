@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import React, { useState, useEffect } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
 import Image from "next/image";
@@ -348,7 +348,7 @@ const MyAccount = () => {
                           fill=""
                         />
                       </svg>
-                      Nombre: {userProfile?.shippingAddress?.firstName && userProfile?.shippingAddress?.lastName ? ` ` : (user?.displayName || user?.email?.split('@')[0] || 'Usuario')}
+                      Nombre: {userProfile?.shippingAddress?.firstName && userProfile?.shippingAddress?.lastName ? `${userProfile.shippingAddress.firstName} ${userProfile.shippingAddress.lastName}` : (user?.displayName || user?.email?.split('@')[0] || 'Usuario')}
                     </p>
 
                     <p className="flex items-center gap-2.5 text-custom-sm">
@@ -396,7 +396,7 @@ const MyAccount = () => {
                           fill=""
                         />
                       </svg>
-                      Tel�fono: {userProfile?.shippingAddress?.phone || '-'}
+                      Teléfono: {userProfile?.shippingAddress?.phone || '-'}
                     </p>
 
                     <p className="flex gap-2.5 text-custom-sm">
@@ -422,7 +422,7 @@ const MyAccount = () => {
                           </clipPath>
                         </defs>
                       </svg>
-                      Direcci�n: {userProfile?.shippingAddress?.street ? `, ` : 'No guardada a�n'}
+                      Dirección: {userProfile?.shippingAddress?.street ? `${userProfile.shippingAddress.street}, ${userProfile.shippingAddress.city}` : 'No guardada aún'}
                     </p>
                   </div>
                 </div>
@@ -480,7 +480,7 @@ const MyAccount = () => {
                           fill=""
                         />
                       </svg>
-                      Nombre: {userProfile?.shippingAddress?.firstName && userProfile?.shippingAddress?.lastName ? ` ` : (user?.displayName || user?.email?.split('@')[0] || 'Usuario')}
+                      Nombre: {userProfile?.shippingAddress?.firstName && userProfile?.shippingAddress?.lastName ? `${userProfile.shippingAddress.firstName} ${userProfile.shippingAddress.lastName}` : (user?.displayName || user?.email?.split('@')[0] || 'Usuario')}
                     </p>
 
                     <p className="flex items-center gap-2.5 text-custom-sm">
@@ -528,7 +528,7 @@ const MyAccount = () => {
                           fill=""
                         />
                       </svg>
-                      Tel�fono: {userProfile?.shippingAddress?.phone || '-'}
+                      Teléfono: {userProfile?.shippingAddress?.phone || '-'}
                     </p>
 
                     <p className="flex gap-2.5 text-custom-sm">
@@ -554,7 +554,7 @@ const MyAccount = () => {
                           </clipPath>
                         </defs>
                       </svg>
-                      Direcci�n: {userProfile?.shippingAddress?.street ? `, ` : 'No guardada a�n'}
+                      Dirección: {userProfile?.shippingAddress?.street ? `${userProfile.shippingAddress.street}, ${userProfile.shippingAddress.city}` : 'No guardada aún'}
                     </p>
                   </div>
                 </div>

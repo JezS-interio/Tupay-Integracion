@@ -132,7 +132,7 @@ const Pagar = () => {
           email: shippingAddress.email,
           document: payerDocument.trim(),
           documentType,
-          phone: shippingAddress.phone || undefined,
+          phone: (() => { const c = (shippingAddress.phone || '').replace(/\D/g, '').replace(/^(0051|51)/, '').slice(0, 9); return c || undefined; })(),
         };
         console.log('TuPay payload:', tupayPayload);
 
