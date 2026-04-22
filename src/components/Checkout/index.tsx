@@ -10,7 +10,6 @@ import { saveCheckoutAddress } from "@/lib/firebase/users";
 import { ShippingAddress } from "@/types/order";
 import toast from "react-hot-toast";
 import Breadcrumb from "../Common/Breadcrumb";
-import Shipping from "./Shipping";
 import ShippingMethod from "./ShippingMethod";
 import PaymentMethod from "./PaymentMethod";
 import Coupon from "./Coupon";
@@ -210,9 +209,6 @@ const Pagar = () => {
 
                 {/* <!-- billing details --> */}
                 <Billing />
-
-                {/* <!-- address box two --> */}
-                <Shipping />
 
                 {/* <!-- others note box --> */}
                 <div className="bg-white shadow-1 rounded-[10px] p-4 sm:p-8.5 mt-7.5">
