@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import SingleOrder from "./SingleOrder";
 import { useAuth } from "@/app/context/AuthContext";
-import { getUserOrders } from "@/lib/firebase/orders";
 import { Order } from "@/types/order";
+import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
 
 const Orders = () => {
   const { user } = useAuth();
@@ -14,10 +15,26 @@ const Orders = () => {
       setLoading(false);
       return;
     }
-    getUserOrders(user.uid)
-      .then((data) => setOrders(data))
-      .catch(() => setOrders([]))
-      .finally(() => setLoading(false));
+
+    // Real-time listener — updates instantly when webhook changes paymentStatus
+    const q = query(
+      collection(db, "orders"),
+      where("userId", "==", user.uid),
+      orderBy("createdAt", "desc")
+    );
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const data: Order[] = [];
+        snapshot.forEach((doc) => data.push(doc.data() as Order));
+        setOrders(data);
+        setLoading(false);
+      },
+      () => setLoading(false)
+    );
+
+    return () => unsubscribe();
   }, [user?.uid]);
 
   return (
@@ -33,13 +50,13 @@ const Orders = () => {
                 <p className="text-custom-sm text-dark">Fecha</p>
               </div>
               <div className="min-w-[128px]">
-                <p className="text-custom-sm text-dark">Estado de Pago</p>
+                <p className="text-custom-sm text-dark">Estado</p>
               </div>
               <div className="min-w-[113px]">
                 <p className="text-custom-sm text-dark">Total</p>
               </div>
               <div className="min-w-[113px]">
-                <p className="text-custom-sm text-dark">Acción</p>
+                <p className="text-custom-sm text-dark">Productos</p>
               </div>
             </div>
           )}
