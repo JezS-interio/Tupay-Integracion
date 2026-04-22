@@ -1,17 +1,27 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Breadcrumb from "../Common/Breadcrumb";
 import Image from "next/image";
 import AddressModal from "./AddressModal";
 import Orders from "../Orders";
 import { useAuth } from "@/app/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { getUserProfile } from "@/lib/firebase/users";
+import { UserProfile } from "@/types/user";
 
 const MyAccount = () => {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [addressModal, setAddressModal] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+
+  useEffect(() => {
+    if (!user?.uid) return;
+    getUserProfile(user.uid)
+      .then((profile) => setUserProfile(profile))
+      .catch(() => {});
+  }, [user?.uid]);
 
   const handleLogout = async () => {
     await logout();
@@ -57,7 +67,7 @@ const MyAccount = () => {
                       {user?.displayName || user?.email?.split('@')[0] || 'User'}
                     </p>
                     <p className="text-custom-xs">
-                      Member Since {user?.metadata?.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Recently'}
+                      Miembro desde {user?.metadata?.creationTime ? new Date(user.metadata.creationTime).toLocaleDateString('es-PE', { month: 'short', year: 'numeric' }) : 'Recientemente'}
                     </p>
                   </div>
                 </div>
@@ -251,20 +261,21 @@ const MyAccount = () => {
             >
               <p className="text-dark">
                 ¡Hola {user?.displayName || user?.email?.split('@')[0] || 'invitado'}!{' '}
-                (¿no eres {user?.displayName || user?.email?.split('@')[0] || 'tú'}?
+                (¿no eres {user?.displayName || user?.email?.split('@')[0] || 'tú'}?{' '}
                 <a
                   href="#"
+                  onClick={(e) => { e.preventDefault(); handleLogout(); }}
                   className="text-red ease-out duration-200 hover:underline"
                 >
-                  Log Out
+                  Cerrar Sesión
                 </a>
                 )
               </p>
 
               <p className="text-custom-sm mt-4">
-                From your account dashboard you can view your recent orders,
-                manage your shipping and billing addresses, and edit your
-                password and account details.
+                Desde el panel de tu cuenta puedes ver tus pedidos recientes,
+                gestionar tus direcciones de envío y facturación, y editar
+                tu contraseña y los detalles de tu cuenta.
               </p>
             </div>
             {/* <!-- dashboard tab content end -->
@@ -288,7 +299,7 @@ const MyAccount = () => {
               <div className="xl:max-w-[370px] w-full bg-white shadow-1 rounded-xl">
                 <div className="flex items-center justify-between py-5 px-4 sm:pl-7.5 sm:pr-6 border-b border-gray-3">
                   <p className="font-medium text-xl text-dark">
-                    Shipping Address
+                    Dirección de Envío
                   </p>
 
                   <button
@@ -337,7 +348,7 @@ const MyAccount = () => {
                           fill=""
                         />
                       </svg>
-                      Name: {user?.displayName || user?.email?.split('@')[0] || 'User'}
+                      Nombre: {userProfile?.shippingAddress?.firstName && userProfile?.shippingAddress?.lastName ? ` ` : (user?.displayName || user?.email?.split('@')[0] || 'Usuario')}
                     </p>
 
                     <p className="flex items-center gap-2.5 text-custom-sm">
@@ -356,7 +367,7 @@ const MyAccount = () => {
                           fill=""
                         />
                       </svg>
-                      Email: jamse@example.com
+                      Correo: {userProfile?.shippingAddress?.email || user?.email || '-'}
                     </p>
 
                     <p className="flex items-center gap-2.5 text-custom-sm">
@@ -385,7 +396,7 @@ const MyAccount = () => {
                           fill=""
                         />
                       </svg>
-                      Phone: 1234 567890
+                      Tel�fono: {userProfile?.shippingAddress?.phone || '-'}
                     </p>
 
                     <p className="flex gap-2.5 text-custom-sm">
@@ -411,7 +422,7 @@ const MyAccount = () => {
                           </clipPath>
                         </defs>
                       </svg>
-                      Address: 7398 Smoke Ranch RoadLas Vegas, Nevada 89128
+                      Direcci�n: {userProfile?.shippingAddress?.street ? `, ` : 'No guardada a�n'}
                     </p>
                   </div>
                 </div>
@@ -420,7 +431,7 @@ const MyAccount = () => {
               <div className="xl:max-w-[370px] w-full bg-white shadow-1 rounded-xl">
                 <div className="flex items-center justify-between py-5 px-4 sm:pl-7.5 sm:pr-6 border-b border-gray-3">
                   <p className="font-medium text-xl text-dark">
-                    Billing Address
+                    Dirección de Facturación
                   </p>
 
                   <button
@@ -469,7 +480,7 @@ const MyAccount = () => {
                           fill=""
                         />
                       </svg>
-                      Name: {user?.displayName || user?.email?.split('@')[0] || 'User'}
+                      Nombre: {userProfile?.shippingAddress?.firstName && userProfile?.shippingAddress?.lastName ? ` ` : (user?.displayName || user?.email?.split('@')[0] || 'Usuario')}
                     </p>
 
                     <p className="flex items-center gap-2.5 text-custom-sm">
@@ -488,7 +499,7 @@ const MyAccount = () => {
                           fill=""
                         />
                       </svg>
-                      Email: jamse@example.com
+                      Correo: {userProfile?.shippingAddress?.email || user?.email || '-'}
                     </p>
 
                     <p className="flex items-center gap-2.5 text-custom-sm">
@@ -517,7 +528,7 @@ const MyAccount = () => {
                           fill=""
                         />
                       </svg>
-                      Phone: 1234 567890
+                      Tel�fono: {userProfile?.shippingAddress?.phone || '-'}
                     </p>
 
                     <p className="flex gap-2.5 text-custom-sm">
@@ -543,7 +554,7 @@ const MyAccount = () => {
                           </clipPath>
                         </defs>
                       </svg>
-                      Address: 7398 Smoke Ranch RoadLas Vegas, Nevada 89128
+                      Direcci�n: {userProfile?.shippingAddress?.street ? `, ` : 'No guardada a�n'}
                     </p>
                   </div>
                 </div>
@@ -562,7 +573,7 @@ const MyAccount = () => {
                   <div className="flex flex-col lg:flex-row gap-5 sm:gap-8 mb-5">
                     <div className="w-full">
                       <label htmlFor="firstName" className="block mb-2.5">
-                        First Name <span className="text-red">*</span>
+                        Nombre <span className="text-red">*</span>
                       </label>
 
                       <input
@@ -577,7 +588,7 @@ const MyAccount = () => {
 
                     <div className="w-full">
                       <label htmlFor="lastName" className="block mb-2.5">
-                        Last Name <span className="text-red">*</span>
+                        Apellido <span className="text-red">*</span>
                       </label>
 
                       <input
@@ -593,7 +604,7 @@ const MyAccount = () => {
 
                   <div className="mb-5">
                     <label htmlFor="countryName" className="block mb-2.5">
-                      Country/ Region <span className="text-red">*</span>
+                      País/ Región <span className="text-red">*</span>
                     </label>
 
                     <div className="relative">
@@ -627,23 +638,22 @@ const MyAccount = () => {
                     type="submit"
                     className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md ease-out duration-200 hover:bg-blue-dark"
                   >
-                    Save Changes
+                    Guardar Cambios
                   </button>
                 </div>
 
                 <p className="text-custom-sm mt-5 mb-9">
-                  This will be how your name will be displayed in the account
-                  section and in reviews
+                  Así se mostrará tu nombre en la sección de cuenta y en las reseñas
                 </p>
 
                 <p className="font-medium text-xl sm:text-2xl text-dark mb-7">
-                  Password Change
+                  Cambiar Contraseña
                 </p>
 
                 <div className="bg-white shadow-1 rounded-xl p-4 sm:p-8.5">
                   <div className="mb-5">
                     <label htmlFor="oldPassword" className="block mb-2.5">
-                      Old Password
+                      Contraseña Actual
                     </label>
 
                     <input
@@ -657,7 +667,7 @@ const MyAccount = () => {
 
                   <div className="mb-5">
                     <label htmlFor="newPassword" className="block mb-2.5">
-                      New Password
+                      Nueva Contraseña
                     </label>
 
                     <input
@@ -674,7 +684,7 @@ const MyAccount = () => {
                       htmlFor="confirmNewPassword"
                       className="block mb-2.5"
                     >
-                      Confirm New Password
+                      Confirmar Nueva Contraseña
                     </label>
 
                     <input
@@ -690,7 +700,7 @@ const MyAccount = () => {
                     type="submit"
                     className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md ease-out duration-200 hover:bg-blue-dark"
                   >
-                    Change Password
+                    Cambiar Contraseña
                   </button>
                 </div>
               </form>

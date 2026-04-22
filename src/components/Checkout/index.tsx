@@ -6,6 +6,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import { selectCartItems, selectTotalPrice, removeAllItemsFromCart } from "@/redux/features/cart-slice";
 import { deleteAbandonedCart } from "@/lib/firebase/abandoned-carts";
 import { createOrder } from "@/lib/firebase/orders";
+import { saveCheckoutAddress } from "@/lib/firebase/users";
 import { ShippingAddress } from "@/types/order";
 import toast from "react-hot-toast";
 import Breadcrumb from "../Common/Breadcrumb";
@@ -95,6 +96,25 @@ const Pagar = () => {
       // Delete abandoned cart record
       if (user.email) {
         await deleteAbandonedCart(user.email);
+      }
+
+      // Save address to user profile for future checkouts
+      try {
+        const nameParts = shippingAddress.fullName.trim().split(' ');
+        await saveCheckoutAddress(user.uid, {
+          firstName: formData.get('firstName') as string || nameParts[0] || '',
+          lastName: formData.get('lastName') as string || nameParts.slice(1).join(' ') || '',
+          email: shippingAddress.email,
+          phone: shippingAddress.phone,
+          companyName: formData.get('companyName') as string || '',
+          street: shippingAddress.address,
+          streetTwo: formData.get('addressTwo') as string || '',
+          city: shippingAddress.city,
+          state: shippingAddress.state,
+          country: shippingAddress.country || 'PE',
+        });
+      } catch (e) {
+        console.error('Failed to save address:', e);
       }
 
       if (paymentMethod === 'tupay') {

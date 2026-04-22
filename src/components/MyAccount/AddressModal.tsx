@@ -1,8 +1,54 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/app/context/AuthContext";
+import { getUserProfile, saveCheckoutAddress } from "@/lib/firebase/users";
 
 const AddressModal = ({ isOpen, closeModal }) => {
   const { user } = useAuth();
+  const [savedAddress, setSavedAddress] = useState<any>(null);
+
+  useEffect(() => {
+    if (!user?.uid) return;
+    getUserProfile(user.uid)
+      .then((profile) => {
+        if (profile?.shippingAddress) {
+          setSavedAddress(profile.shippingAddress);
+        }
+      })
+      .catch(() => {});
+  }, [user?.uid]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!user?.uid) return;
+    const data = new FormData(e.currentTarget);
+    try {
+      await saveCheckoutAddress(user.uid, {
+        firstName: data.get('firstName') as string || '',
+        lastName: data.get('lastName') as string || '',
+        email: data.get('email') as string || '',
+        phone: data.get('phone') as string || '',
+        companyName: '',
+        street: data.get('address') as string || '',
+        streetTwo: '',
+        city: data.get('city') as string || '',
+        state: data.get('state') as string || '',
+        country: 'PE',
+      });
+      setSavedAddress({
+        firstName: data.get('firstName'),
+        lastName: data.get('lastName'),
+        email: data.get('email'),
+        phone: data.get('phone'),
+        street: data.get('address'),
+        city: data.get('city'),
+        state: data.get('state'),
+      });
+      closeModal();
+    } catch (e) {
+      console.error('Failed to save address:', e);
+    }
+  };
+
   useEffect(() => {
     // closing modal while clicking outside
     function handleClickOutside(event) {
@@ -54,30 +100,30 @@ const AddressModal = ({ isOpen, closeModal }) => {
           </button>
 
           <div>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="flex flex-col lg:flex-row gap-5 sm:gap-8 mb-5">
                 <div className="w-full">
-                  <label htmlFor="name" className="block mb-2.5">
-                    Name
+                  <label htmlFor="firstName" className="block mb-2.5">
+                    Nombre
                   </label>
 
                   <input
                     type="text"
-                    name="name"
-                    defaultValue={user?.displayName || user?.email?.split('@')[0] || ''}
+                    name="firstName"
+                    defaultValue={savedAddress?.firstName || ''}
                     className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
                   />
                 </div>
 
                 <div className="w-full">
-                  <label htmlFor="email" className="block mb-2.5">
-                    Email
+                  <label htmlFor="lastName" className="block mb-2.5">
+                    Apellido
                   </label>
 
                   <input
-                    type="email"
-                    name="email"
-                    defaultValue={user?.email || ''}
+                    type="text"
+                    name="lastName"
+                    defaultValue={savedAddress?.lastName || ''}
                     className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
                   />
                 </div>
@@ -85,37 +131,78 @@ const AddressModal = ({ isOpen, closeModal }) => {
 
               <div className="flex flex-col lg:flex-row gap-5 sm:gap-8 mb-5">
                 <div className="w-full">
-                  <label htmlFor="phone" className="block mb-2.5">
-                    Phone
+                  <label htmlFor="email" className="block mb-2.5">
+                    Correo Electrónico
                   </label>
 
                   <input
-                    type="text"
-                    name="phone"
-                    defaultValue="1234 567890"
+                    type="email"
+                    name="email"
+                    defaultValue={savedAddress?.email || user?.email || ''}
                     className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
                   />
                 </div>
 
                 <div className="w-full">
+                  <label htmlFor="phone" className="block mb-2.5">
+                    Teléfono
+                  </label>
+
+                  <input
+                    type="text"
+                    name="phone"
+                    defaultValue={savedAddress?.phone || ''}
+                    className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col lg:flex-row gap-5 sm:gap-8 mb-5">
+                <div className="w-full">
                   <label htmlFor="address" className="block mb-2.5">
-                    Address
+                    Dirección
                   </label>
 
                   <input
                     type="text"
                     name="address"
-                    defaultValue="7398 Smoke Ranch RoadLas Vegas, Nevada 89128"
+                    defaultValue={savedAddress?.street || ''}
                     className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
                   />
                 </div>
+
+                <div className="w-full">
+                  <label htmlFor="city" className="block mb-2.5">
+                    Ciudad
+                  </label>
+
+                  <input
+                    type="text"
+                    name="city"
+                    defaultValue={savedAddress?.city || ''}
+                    className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
+                  />
+                </div>
+              </div>
+
+              <div className="mb-5">
+                <label htmlFor="state" className="block mb-2.5">
+                  Departamento
+                </label>
+
+                <input
+                  type="text"
+                  name="state"
+                  defaultValue={savedAddress?.state || ''}
+                  className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
+                />
               </div>
 
               <button
                 type="submit"
                 className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md ease-out duration-200 hover:bg-blue-dark"
               >
-                Save Changes
+                Guardar Cambios
               </button>
             </form>
           </div>

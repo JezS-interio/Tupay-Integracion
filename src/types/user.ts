@@ -9,7 +9,13 @@ export interface UserProfile {
 
   // Shipping information
   shippingAddress?: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
+    companyName?: string;
     street: string;
+    streetTwo?: string;
     city: string;
     state: string;
     zip: string;
@@ -18,6 +24,10 @@ export interface UserProfile {
 
   // Billing information
   billingAddress?: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phone?: string;
     street: string;
     city: string;
     state: string;

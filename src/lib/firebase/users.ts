@@ -105,6 +105,38 @@ export async function addOrderToUserHistory(uid: string, orderId: string): Promi
 }
 
 /**
+ * Save checkout address to user profile
+ */
+export async function saveCheckoutAddress(uid: string, address: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  companyName?: string;
+  street: string;
+  streetTwo?: string;
+  city: string;
+  state: string;
+  country: string;
+}): Promise<void> {
+  await updateUserProfile(uid, {
+    shippingAddress: {
+      firstName: address.firstName,
+      lastName: address.lastName,
+      email: address.email,
+      phone: address.phone,
+      companyName: address.companyName || '',
+      street: address.street,
+      streetTwo: address.streetTwo || '',
+      city: address.city,
+      state: address.state,
+      zip: '',
+      country: address.country,
+    },
+  });
+}
+
+/**
  * Get all user profiles
  */
 export async function getAllUserProfiles(): Promise<UserProfile[]> {
