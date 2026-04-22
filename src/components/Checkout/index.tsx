@@ -9,7 +9,6 @@ import { createOrder } from "@/lib/firebase/orders";
 import { ShippingAddress } from "@/types/order";
 import toast from "react-hot-toast";
 import Breadcrumb from "../Common/Breadcrumb";
-import Login from "./Login";
 import Shipping from "./Shipping";
 import ShippingMethod from "./ShippingMethod";
 import PaymentMethod from "./PaymentMethod";
@@ -184,7 +183,6 @@ const Pagar = () => {
       <Breadcrumb title={"Pagar"} pages={["Pagar"]} />
       <section className="overflow-hidden py-20 bg-gray-2">
         <div className="max-w-[1170px] w-full mx-auto px-4 sm:px-8 xl:px-0">
-          <Login />
           <form onSubmit={handlePagar}>
             <div className="flex flex-col lg:flex-row gap-7.5 xl:gap-11">
               {/* <!-- checkout left --> */}
