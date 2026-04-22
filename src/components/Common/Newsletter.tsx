@@ -9,9 +9,34 @@ const Newsletter = () => {
   const [loading, setLoading] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
 
+  const STORAGE_KEY = "newsletter_subscribed_emails";
+
+  const isAlreadySubscribed = (email: string): boolean => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      return stored.includes(email.toLowerCase().trim());
+    } catch {
+      return false;
+    }
+  };
+
+  const saveSubscribed = (email: string) => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      stored.push(email.toLowerCase().trim());
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    } catch {}
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
+
+    if (isAlreadySubscribed(email)) {
+      toast("Ya estás suscrito con ese correo.", { icon: "ℹ️" });
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch("/api/newsletter/subscribe", {
@@ -21,12 +46,9 @@ const Newsletter = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al suscribirse");
-      if (data.message === "already_subscribed") {
-        toast("Ya estás suscrito con ese correo.", { icon: "ℹ️" });
-      } else {
-        setSubscribed(true);
-        toast.success("¡Suscripción exitosa! Revisa tu correo.");
-      }
+      saveSubscribed(email);
+      setSubscribed(true);
+      toast.success("¡Te suscribiste exitosamente!");
     } catch (err: any) {
       toast.error(err.message || "Error al suscribirse");
     } finally {
