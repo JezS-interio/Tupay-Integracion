@@ -2,7 +2,6 @@ import {
   doc,
   getDoc,
   setDoc,
-  updateDoc,
   collection,
   query,
   where,
@@ -56,10 +55,10 @@ export async function updateUserProfile(
 ): Promise<void> {
   const docRef = doc(db, USERS_COLLECTION, uid);
 
-  await updateDoc(docRef, {
+  await setDoc(docRef, {
     ...data,
     updatedAt: new Date().toISOString(),
-  });
+  }, { merge: true });
 }
 
 /**
