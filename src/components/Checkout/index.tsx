@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
 import { selectCartItems, selectTotalPrice, removeAllItemsFromCart } from "@/redux/features/cart-slice";
 import { deleteAbandonedCart } from "@/lib/firebase/abandoned-carts";
+import { deleteUserCart } from "@/lib/firebase/user-carts";
 import { createOrder } from "@/lib/firebase/orders";
 import { saveCheckoutAddress } from "@/lib/firebase/users";
 import { ShippingAddress } from "@/types/order";
@@ -151,8 +152,11 @@ const Pagar = () => {
           return;
         }
 
-        // Clear cart before redirecting
+        // Clear cart before redirecting (Redux, localStorage, and Firestore)
         dispatch(removeAllItemsFromCart());
+        if (user?.uid) {
+          try { await deleteUserCart(user.uid); } catch (_) {}
+        }
 
         // Redirect to TuPay payment page
         window.location.href = tupayData.redirect_url;
@@ -187,6 +191,9 @@ const Pagar = () => {
       }
 
       dispatch(removeAllItemsFromCart());
+      if (user?.uid) {
+        try { await deleteUserCart(user.uid); } catch (_) {}
+      }
       toast.success(`Pedido #${orderId} realizado con éxito. ¡Revisa tu correo!`);
       router.push('/');
     } catch (error) {
