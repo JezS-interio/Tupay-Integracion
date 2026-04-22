@@ -8,6 +8,8 @@ import { useAuth } from "@/app/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { getUserProfile } from "@/lib/firebase/users";
 import { UserProfile } from "@/types/user";
+import { updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
+import { auth } from "@/lib/firebase/config";
 
 const MyAccount = () => {
   const { user, logout } = useAuth();
@@ -15,6 +17,9 @@ const MyAccount = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [addressModal, setAddressModal] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [passwordForm, setPasswordForm] = useState({ oldPassword: "", newPassword: "", confirmNewPassword: "" });
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
     if (!user?.uid) return;
@@ -26,6 +31,44 @@ const MyAccount = () => {
   const handleLogout = async () => {
     await logout();
     router.push("/signin");
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordMessage(null);
+    const { oldPassword, newPassword, confirmNewPassword } = passwordForm;
+    if (!oldPassword || !newPassword || !confirmNewPassword) {
+      setPasswordMessage({ type: "error", text: "Por favor completa todos los campos." });
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setPasswordMessage({ type: "error", text: "Las contraseñas nuevas no coinciden." });
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPasswordMessage({ type: "error", text: "La contraseña debe tener al menos 6 caracteres." });
+      return;
+    }
+    if (!user?.email) {
+      setPasswordMessage({ type: "error", text: "No se pudo verificar el usuario." });
+      return;
+    }
+    setPasswordLoading(true);
+    try {
+      const credential = EmailAuthProvider.credential(user.email, oldPassword);
+      await reauthenticateWithCredential(auth.currentUser!, credential);
+      await updatePassword(auth.currentUser!, newPassword);
+      setPasswordForm({ oldPassword: "", newPassword: "", confirmNewPassword: "" });
+      setPasswordMessage({ type: "success", text: "Contraseña actualizada correctamente." });
+    } catch (err: any) {
+      if (err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
+        setPasswordMessage({ type: "error", text: "La contraseña actual es incorrecta." });
+      } else {
+        setPasswordMessage({ type: "error", text: "Error al cambiar la contraseña. Intenta de nuevo." });
+      }
+    } finally {
+      setPasswordLoading(false);
+    }
   };
 
   const openAddressModal = () => {
@@ -214,7 +257,7 @@ const MyAccount = () => {
                           fill=""
                         />
                       </svg>
-                      Detalles de Cuenta
+                      Seguridad
                     </button>
 
                     <button
@@ -436,88 +479,17 @@ const MyAccount = () => {
                 activeTab === "account-details" ? "block" : "hidden"
               }`}
             >
-              <form>
-                <div className="bg-white shadow-1 rounded-xl p-4 sm:p-8.5">
-                  <div className="flex flex-col lg:flex-row gap-5 sm:gap-8 mb-5">
-                    <div className="w-full">
-                      <label htmlFor="firstName" className="block mb-2.5">
-                        Nombre <span className="text-red">*</span>
-                      </label>
+              <p className="font-medium text-xl sm:text-2xl text-dark mb-7">
+                Cambiar Contraseña
+              </p>
 
-                      <input
-                        type="text"
-                        name="firstName"
-                        id="firstName"
-                        placeholder="Jhon"
-                        value="Jhon"
-                        className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
-                      />
-                    </div>
-
-                    <div className="w-full">
-                      <label htmlFor="lastName" className="block mb-2.5">
-                        Apellido <span className="text-red">*</span>
-                      </label>
-
-                      <input
-                        type="text"
-                        name="lastName"
-                        id="lastName"
-                        placeholder="Deo"
-                        value="Deo"
-                        className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mb-5">
-                    <label htmlFor="countryName" className="block mb-2.5">
-                      País/ Región <span className="text-red">*</span>
-                    </label>
-
-                    <div className="relative">
-                      <select className="w-full bg-gray-1 rounded-md border border-gray-3 text-dark-4 py-3 pl-5 pr-9 duration-200 appearance-none outline-none focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20">
-                        <option value="0">Australia</option>
-                        <option value="1">America</option>
-                        <option value="2">England</option>
-                      </select>
-
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-dark-4">
-                        <svg
-                          className="fill-current"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M2.41469 5.03569L2.41467 5.03571L2.41749 5.03846L7.76749 10.2635L8.0015 10.492L8.23442 10.2623L13.5844 4.98735L13.5844 4.98735L13.5861 4.98569C13.6809 4.89086 13.8199 4.89087 13.9147 4.98569C14.0092 5.08024 14.0095 5.21864 13.9155 5.31345C13.9152 5.31373 13.915 5.31401 13.9147 5.31429L8.16676 10.9622L8.16676 10.9622L8.16469 10.9643C8.06838 11.0606 8.02352 11.0667 8.00039 11.0667C7.94147 11.0667 7.89042 11.0522 7.82064 10.9991L2.08526 5.36345C1.99127 5.26865 1.99154 5.13024 2.08609 5.03569C2.18092 4.94086 2.31986 4.94086 2.41469 5.03569Z"
-                            fill=""
-                            stroke=""
-                            stroke-width="0.666667"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md ease-out duration-200 hover:bg-blue-dark"
-                  >
-                    Guardar Cambios
-                  </button>
+              {passwordMessage && (
+                <div className={`mb-5 p-4 rounded-md text-sm ${passwordMessage.type === "success" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
+                  {passwordMessage.text}
                 </div>
+              )}
 
-                <p className="text-custom-sm mt-5 mb-9">
-                  Así se mostrará tu nombre en la sección de cuenta y en las reseñas
-                </p>
-
-                <p className="font-medium text-xl sm:text-2xl text-dark mb-7">
-                  Cambiar Contraseña
-                </p>
-
+              <form onSubmit={handlePasswordChange}>
                 <div className="bg-white shadow-1 rounded-xl p-4 sm:p-8.5">
                   <div className="mb-5">
                     <label htmlFor="oldPassword" className="block mb-2.5">
@@ -528,7 +500,9 @@ const MyAccount = () => {
                       type="password"
                       name="oldPassword"
                       id="oldPassword"
-                      autoComplete="on"
+                      autoComplete="current-password"
+                      value={passwordForm.oldPassword}
+                      onChange={(e) => setPasswordForm((prev) => ({ ...prev, oldPassword: e.target.value }))}
                       className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
                     />
                   </div>
@@ -542,16 +516,15 @@ const MyAccount = () => {
                       type="password"
                       name="newPassword"
                       id="newPassword"
-                      autoComplete="on"
+                      autoComplete="new-password"
+                      value={passwordForm.newPassword}
+                      onChange={(e) => setPasswordForm((prev) => ({ ...prev, newPassword: e.target.value }))}
                       className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
                     />
                   </div>
 
                   <div className="mb-5">
-                    <label
-                      htmlFor="confirmNewPassword"
-                      className="block mb-2.5"
-                    >
+                    <label htmlFor="confirmNewPassword" className="block mb-2.5">
                       Confirmar Nueva Contraseña
                     </label>
 
@@ -559,16 +532,19 @@ const MyAccount = () => {
                       type="password"
                       name="confirmNewPassword"
                       id="confirmNewPassword"
-                      autoComplete="on"
+                      autoComplete="new-password"
+                      value={passwordForm.confirmNewPassword}
+                      onChange={(e) => setPasswordForm((prev) => ({ ...prev, confirmNewPassword: e.target.value }))}
                       className="rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md ease-out duration-200 hover:bg-blue-dark"
+                    disabled={passwordLoading}
+                    className="inline-flex font-medium text-white bg-blue py-3 px-7 rounded-md ease-out duration-200 hover:bg-blue-dark disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Cambiar Contraseña
+                    {passwordLoading ? "Actualizando..." : "Cambiar Contraseña"}
                   </button>
                 </div>
               </form>
