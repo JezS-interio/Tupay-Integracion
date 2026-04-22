@@ -14,7 +14,7 @@ type SavedAddress = NonNullable<UserProfile["shippingAddress"]> & {
 const inputClass =
   "rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 w-full py-2.5 px-5 outline-none duration-200 focus:border-transparent focus:shadow-input focus:ring-2 focus:ring-blue/20";
 
-const BillingForm = ({ defaults }: { defaults?: Partial<SavedAddress> }) => (
+const BillingForm = ({ defaults, userEmail }: { defaults?: Partial<SavedAddress>; userEmail?: string }) => (
   <>
     <div className="flex flex-col lg:flex-row gap-5 sm:gap-8 mb-5">
       <div className="w-full">
@@ -29,13 +29,6 @@ const BillingForm = ({ defaults }: { defaults?: Partial<SavedAddress> }) => (
         </label>
         <input type="text" name="lastName" id="lastName" placeholder="Pérez" defaultValue={defaults?.lastName || ""} className={inputClass} />
       </div>
-    </div>
-
-    <div className="mb-5">
-      <label htmlFor="companyName" className="block mb-2.5">
-        Nombre de la Empresa
-      </label>
-      <input type="text" name="companyName" id="companyName" defaultValue={defaults?.companyName || ""} className={inputClass} />
     </div>
 
     <div className="mb-5">
@@ -81,7 +74,7 @@ const BillingForm = ({ defaults }: { defaults?: Partial<SavedAddress> }) => (
       <label htmlFor="email" className="block mb-2.5">
         Correo Electrónico <span className="text-red">*</span>
       </label>
-      <input type="email" name="email" id="email" defaultValue={defaults?.email || ""} className={inputClass} />
+      <input type="email" name="email" id="email" defaultValue={defaults?.email || userEmail || ""} className={inputClass} />
     </div>
   </>
 );
@@ -122,7 +115,7 @@ const Billing = () => {
           <p className="text-dark-5 py-4">Cargando...</p>
         ) : showFullForm ? (
           <>
-            <BillingForm defaults={showForm && savedAddress ? savedAddress : undefined} />
+            <BillingForm defaults={showForm && savedAddress ? savedAddress : undefined} userEmail={user?.email || ""} />
             {hasAddress && (
               <button
                 type="button"
@@ -138,7 +131,7 @@ const Billing = () => {
             {/* Hidden inputs so FormData picks up saved address values */}
             <input type="hidden" name="firstName" value={savedAddress!.firstName} />
             <input type="hidden" name="lastName" value={savedAddress!.lastName} />
-            <input type="hidden" name="email" value={savedAddress!.email} />
+            <input type="hidden" name="email" value={savedAddress!.email || user?.email || ""} />
             <input type="hidden" name="phone" value={savedAddress!.phone} />
             <input type="hidden" name="address" value={savedAddress!.street} />
             <input type="hidden" name="addressTwo" value={savedAddress!.streetTwo || ""} />
