@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { encryptWithIzipayPublicKey } from "@/utils/izipay-encrypt";
+// import eliminado: encryptWithIzipayPublicKey ya no se usa
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/AuthContext";
@@ -366,5 +366,4 @@ const Pagar = () => {
     </>
   );
 };
-
 export default Pagar;
