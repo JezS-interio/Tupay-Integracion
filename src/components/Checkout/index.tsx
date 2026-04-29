@@ -173,12 +173,20 @@ const Pagar = () => {
         // Izipay: tokenización y pago
         try {
           // Clave pública de Izipay (sandbox)
-          const PUBLIC_KEY_IZIPAY = `-----BEGIN PUBLIC KEY-----\nMIIBjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnbZQIF0Fys/1ib3M1XWUWRwuTQ5s/xIXG+a7BLGR3Wlt5j1/G2ppMWC3c0mSqXTCf2wyihtNm3hirr+edhpbKELcMOAZ/RdiJ9S6re9QYoxpOEDlffBpd81IC0tzSE/XW1eoCa4YceH1fsm9R843wvzxhNS1x71PLxKyt7nD+RjAY4grwO3siyJZ+4Rnx5KXO/Ul...O2St4u0H4xsbiq qwjoXOEJhCS+C0fZFIMDihno2cXPUhQi5Lc3S6ZMSutPqWdBy0GF/FJ30h++t0qsgA5VfxHnGtPKQVBOdgTT7HUR04KoSb5VNpGGtjNt4eqmewGfZ4gGFPrkkq9mwspncQIDAQAB\n-----END PUBLIC KEY-----`;
+          const PUBLIC_KEY_IZIPAY = `-----BEGIN PUBLIC KEY-----\nMIIBjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnbZQIF0Fys/1ib3M1XWUWRwuTQ5s/xIXG+a7BLGR3Wlt5j1/G2ppMWC3c0mSqXTCf2wyihtNm3hirr+edhpbKELcMOAZ/RdiJ9S6re9QYoxpOEDlffBpd81IC0tzSE/XW1eoCa4YceH1fsm9R843wvzxhNS1x71PLxKyt7nD+RjAY4grwO3siyJZ+4Rnx5KXO/UleO2St4u0H4xsbiq\nqwjoXOEJhCS+C0fZFIMDihno2cXPUhQi5Lc3S6ZMSutPqWdBy0GF/FJ30h++t0qsgA5VfxHnGtPKQVBOdgTT7HUR04KoSb5VNpGGtjNt4eqmewGfZ4gGFPrkkq9mwspncQIDAQAB\n-----END PUBLIC KEY-----`;
           // Encriptar datos de tarjeta
-          const pan = await encryptWithIzipayPublicKey(cardNumber, PUBLIC_KEY_IZIPAY);
-          const expirationMonth = await encryptWithIzipayPublicKey(cardMonth, PUBLIC_KEY_IZIPAY);
-          const expirationYear = await encryptWithIzipayPublicKey(cardYear, PUBLIC_KEY_IZIPAY);
-          const cvc = await encryptWithIzipayPublicKey(cardCvc, PUBLIC_KEY_IZIPAY);
+          let pan, expirationMonth, expirationYear, cvc;
+          try {
+            pan = await encryptWithIzipayPublicKey(cardNumber, PUBLIC_KEY_IZIPAY);
+            expirationMonth = await encryptWithIzipayPublicKey(cardMonth, PUBLIC_KEY_IZIPAY);
+            expirationYear = await encryptWithIzipayPublicKey(cardYear, PUBLIC_KEY_IZIPAY);
+            cvc = await encryptWithIzipayPublicKey(cardCvc, PUBLIC_KEY_IZIPAY);
+          } catch (encErr) {
+            console.error("[Izipay] Error encriptando datos de tarjeta:", encErr);
+            toast.error("Error encriptando datos de tarjeta: " + (encErr?.message || encErr));
+            setLoading(false);
+            return;
+          }
 
           const izipayPayload = {
             merchantCode: "4004353", // tu código de comercio
@@ -218,13 +226,22 @@ const Pagar = () => {
             },
             clientIp: '127.0.0.1'
           };
-          const paymentRes = await fetch('/api/izipay/create-payment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(izipayPayload),
-          });
-          const paymentData = await paymentRes.json();
+          let paymentRes, paymentData;
+          try {
+            paymentRes = await fetch('/api/izipay/create-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(izipayPayload),
+            });
+            paymentData = await paymentRes.json();
+          } catch (fetchErr) {
+            console.error("[Izipay] Error enviando datos a backend:", fetchErr);
+            toast.error("Error enviando datos a backend: " + (fetchErr?.message || fetchErr));
+            setLoading(false);
+            return;
+          }
           if (!paymentRes.ok || !paymentData.token) {
+            console.error("[Izipay] Error respuesta backend:", paymentData);
             toast.error(paymentData.error || 'Error al tokenizar tarjeta en Izipay.');
             setLoading(false);
             return;
@@ -237,7 +254,8 @@ const Pagar = () => {
           // Redirigir o continuar flujo según tu lógica
           return;
         } catch (err) {
-          toast.error('Error al encriptar o enviar datos a Izipay.');
+          console.error("[Izipay] Error general:", err);
+          toast.error('Error inesperado en el flujo de pago Izipay.');
           setLoading(false);
           return;
         }
