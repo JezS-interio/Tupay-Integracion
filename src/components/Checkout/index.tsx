@@ -47,12 +47,10 @@ const Pagar = () => {
     }
 
     // Validar documento para TuPay e Izipay
-
     if ((paymentMethod === "tupay" || paymentMethod === "izipay") && !payerDocument.trim()) {
       toast.error("Ingresa tu número de documento para pagar con " + (paymentMethod === "tupay" ? "TuPay" : "Izipay"));
       return;
     }
-    // ...existing code...
 
     setLoading(true);
 
@@ -122,15 +120,43 @@ const Pagar = () => {
         console.error('Failed to save address:', e);
       }
 
-
-      if (paymentMethod === 'tupay' || paymentMethod === 'izipay') {
+      if (paymentMethod === 'tupay') {
         const nameParts = shippingAddress.fullName.trim().split(' ');
         const firstName = nameParts[0] || 'Cliente';
         const lastName = nameParts.slice(1).join(' ') || 'Cliente';
+        const paymentPayload = {
+          orderId,
+          amount: total.toFixed(2),
+          currency: 'PEN',
+          firstName,
+          lastName,
+          email: shippingAddress.email,
+          documentType,
+          phone: (() => { const c = (shippingAddress.phone || '').replace(/\D/g, '').replace(/^(0051|51)/, '').slice(0, 9); return c || undefined; })(),
+        };
+        const paymentRes = await fetch('/api/tupay/create-deposit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(paymentPayload),
+        });
+        const paymentData = await paymentRes.json();
+        if (!paymentRes.ok || !paymentData.redirect_url) {
+          toast.error(paymentData.error || 'Error al iniciar el pago con TuPay. Intenta de nuevo.');
+          setLoading(false);
+          return;
+        }
+        dispatch(removeAllItemsFromCart());
+        if (user?.uid) { try { await deleteUserCart(user.uid); } catch (_) {} }
+        window.location.href = paymentData.redirect_url;
+        return;
+      }
 
-        if (paymentMethod === 'tupay') {
-          // ...existing code...
-          const paymentPayload = {
+      if (paymentMethod === 'izipay') {
+        const nameParts = shippingAddress.fullName.trim().split(' ');
+        const firstName = nameParts[0] || 'Cliente';
+        const lastName = nameParts.slice(1).join(' ') || 'Cliente';
+        try {
+          const izipayLinkPayload = {
             orderId,
             amount: total.toFixed(2),
             currency: 'PEN',
@@ -138,82 +164,38 @@ const Pagar = () => {
             lastName,
             email: shippingAddress.email,
             documentType,
-            phone: (() => { const c = (shippingAddress.phone || '').replace(/\D/g, '').replace(/^(0051|51)/, '').slice(0, 9); return c || undefined; })(),
+            document: payerDocument.trim(),
+            phone: shippingAddress.phone,
+            // Puedes agregar más campos si tu backend los requiere
           };
-          const paymentRes = await fetch('/api/tupay/create-deposit', {
+          const paymentRes = await fetch('/api/izipay/create-link', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(paymentPayload),
+            body: JSON.stringify(izipayLinkPayload),
           });
-          if (paymentMethod === 'tupay' || paymentMethod === 'izipay') {
-            const nameParts = shippingAddress.fullName.trim().split(' ');
-            const firstName = nameParts[0] || 'Cliente';
-            const lastName = nameParts.slice(1).join(' ') || 'Cliente';
+          const paymentData = await paymentRes.json();
+          if (!paymentRes.ok || !paymentData.payment_url) {
+            toast.error(paymentData.error || 'Error al iniciar el pago con Izipay. Intenta de nuevo.');
+            setLoading(false);
+            return;
+          }
+          dispatch(removeAllItemsFromCart());
+          if (user?.uid) { try { await deleteUserCart(user.uid); } catch (_) {} }
+          window.location.href = paymentData.payment_url;
+          return;
+        } catch (err) {
+          toast.error('Error al procesar el pago con Izipay.');
+          setLoading(false);
+          return;
+        }
+      }
 
-            if (paymentMethod === 'tupay') {
-              // ...existing code...
-              const paymentPayload = {
-                orderId,
-                amount: total.toFixed(2),
-                currency: 'PEN',
-                firstName,
-                lastName,
-                email: shippingAddress.email,
-                documentType,
-                phone: (() => { const c = (shippingAddress.phone || '').replace(/\D/g, '').replace(/^(0051|51)/, '').slice(0, 9); return c || undefined; })(),
-              };
-              const paymentRes = await fetch('/api/tupay/create-deposit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(paymentPayload),
-              });
-              const paymentData = await paymentRes.json();
-              if (!paymentRes.ok || !paymentData.redirect_url) {
-                toast.error(paymentData.error || 'Error al iniciar el pago con TuPay. Intenta de nuevo.');
-                setLoading(false);
-                return;
-              }
-              dispatch(removeAllItemsFromCart());
-              if (user?.uid) { try { await deleteUserCart(user.uid); } catch (_) {} }
-              window.location.href = paymentData.redirect_url;
-              return;
-            }
-
-            // Izipay: Link de pago
-            try {
-              const izipayLinkPayload = {
-                orderId,
-                amount: total.toFixed(2),
-                currency: 'PEN',
-                firstName,
-                lastName,
-                email: shippingAddress.email,
-                documentType,
-                document: payerDocument.trim(),
-                phone: shippingAddress.phone,
-                // Puedes agregar más campos si tu backend los requiere
-              };
-              const paymentRes = await fetch('/api/izipay/create-link', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(izipayLinkPayload),
-              });
-              const paymentData = await paymentRes.json();
-              if (!paymentRes.ok || !paymentData.payment_url) {
-                toast.error(paymentData.error || 'Error al iniciar el pago con Izipay. Intenta de nuevo.');
-                setLoading(false);
-                return;
-              }
-              dispatch(removeAllItemsFromCart());
-              if (user?.uid) { try { await deleteUserCart(user.uid); } catch (_) {} }
-              window.location.href = paymentData.payment_url;
-              return;
-            } catch (err) {
-              toast.error('Error al procesar el pago con Izipay.');
-              setLoading(false);
-              return;
-            }
-        // ...existing code...
+    } catch (error) {
+      console.error('Pagar error:', error);
+      toast.error('No se pudo procesar el pedido. Intenta de nuevo.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
