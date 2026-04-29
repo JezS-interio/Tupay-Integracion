@@ -44,8 +44,9 @@ const Pagar = () => {
       return;
     }
 
-    if (paymentMethod === "tupay" && !payerDocument.trim()) {
-      toast.error("Ingresa tu número de documento para pagar con TuPay");
+    // Validar documento para TuPay e Izipay
+    if ((paymentMethod === "tupay" || paymentMethod === "izipay") && !payerDocument.trim()) {
+      toast.error("Ingresa tu número de documento para pagar con " + (paymentMethod === "tupay" ? "TuPay" : "Izipay"));
       return;
     }
 
@@ -117,13 +118,13 @@ const Pagar = () => {
         console.error('Failed to save address:', e);
       }
 
-      if (paymentMethod === 'tupay') {
-        // Call TuPay API
+      if (paymentMethod === 'tupay' || paymentMethod === 'izipay') {
+        // Call TuPay or Izipay API
         const nameParts = shippingAddress.fullName.trim().split(' ');
         const firstName = nameParts[0] || 'Cliente';
         const lastName = nameParts.slice(1).join(' ') || 'Cliente';
 
-        const tupayPayload = {
+        const paymentPayload = {
           orderId,
           amount: total.toFixed(2),
           currency: 'PEN',
@@ -134,20 +135,21 @@ const Pagar = () => {
           documentType,
           phone: (() => { const c = (shippingAddress.phone || '').replace(/\D/g, '').replace(/^(0051|51)/, '').slice(0, 9); return c || undefined; })(),
         };
-        console.log('TuPay payload:', tupayPayload);
+        console.log(paymentMethod === 'tupay' ? 'TuPay payload:' : 'Izipay payload:', paymentPayload);
 
-        const tupayRes = await fetch('/api/tupay/create-deposit', {
+        const apiUrl = paymentMethod === 'tupay' ? '/api/tupay/create-deposit' : '/api/izipay/create-payment';
+        const paymentRes = await fetch(apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(tupayPayload),
+          body: JSON.stringify(paymentPayload),
         });
 
-        const tupayData = await tupayRes.json();
+        const paymentData = await paymentRes.json();
 
-        if (!tupayRes.ok || !tupayData.redirect_url) {
-          console.error('TuPay error:', tupayData);
-          const missingFields = tupayData.missing ? Object.keys(tupayData.missing).filter((k) => tupayData.missing[k]).join(', ') : '';
-          toast.error(missingFields ? `Faltan campos: ${missingFields}` : tupayData.error || 'Error al iniciar el pago con TuPay. Intenta de nuevo.');
+        if (!paymentRes.ok || !paymentData.redirect_url) {
+          console.error((paymentMethod === 'tupay' ? 'TuPay' : 'Izipay') + ' error:', paymentData);
+          const missingFields = paymentData.missing ? Object.keys(paymentData.missing).filter((k) => paymentData.missing[k]).join(', ') : '';
+          toast.error(missingFields ? `Faltan campos: ${missingFields}` : paymentData.error || `Error al iniciar el pago con ${(paymentMethod === 'tupay' ? 'TuPay' : 'Izipay')}. Intenta de nuevo.`);
           setLoading(false);
           return;
         }
@@ -158,8 +160,8 @@ const Pagar = () => {
           try { await deleteUserCart(user.uid); } catch (_) {}
         }
 
-        // Redirect to TuPay payment page
-        window.location.href = tupayData.redirect_url;
+        // Redirect to payment page
+        window.location.href = paymentData.redirect_url;
         return;
       }
 

@@ -40,6 +40,8 @@ const PaymentMethod = ({
                 id="tupay"
                 className="sr-only"
                 onChange={() => setPayment("tupay")}
+                checked={payment === "tupay"}
+                readOnly
               />
               <div
                 className={`flex h-4 w-4 items-center justify-center rounded-full ${
@@ -61,6 +63,46 @@ const PaymentMethod = ({
                 <div className="border-l border-gray-4 pl-3">
                   <p className="text-sm">Pago online seguro</p>
                   <p className="text-xs text-dark-5">Yape, Plin, BCP, BBVA, Visa, Mastercard</p>
+                </div>
+              </div>
+            </div>
+          </label>
+
+          {/* Izipay */}
+          <label
+            htmlFor="izipay"
+            className="flex cursor-pointer select-none items-center gap-4"
+          >
+            <div className="relative">
+              <input
+                type="checkbox"
+                name="izipay"
+                id="izipay"
+                className="sr-only"
+                onChange={() => setPayment("izipay")}
+                checked={payment === "izipay"}
+                readOnly
+              />
+              <div
+                className={`flex h-4 w-4 items-center justify-center rounded-full ${
+                  payment === "izipay"
+                    ? "border-4 border-blue"
+                    : "border border-gray-4"
+                }`}
+              ></div>
+            </div>
+            <div
+              className={`rounded-md border-[0.5px] py-3.5 px-5 ease-out duration-200 hover:bg-gray-2 hover:border-transparent hover:shadow-none min-w-[240px] ${
+                payment === "izipay"
+                  ? "border-transparent bg-gray-2"
+                  : "border-gray-4 shadow-1"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="font-bold text-blue text-lg">Izipay</span>
+                <div className="border-l border-gray-4 pl-3">
+                  <p className="text-sm">Pago online seguro</p>
+                  <p className="text-xs text-dark-5">Visa, Mastercard, Amex, Diners, Yape, Plin</p>
                 </div>
               </div>
             </div>
@@ -106,8 +148,8 @@ const PaymentMethod = ({
           </label>
         </div>
 
-        {/* DNI field — required only for TuPay */}
-        {payment === "tupay" && (
+        {/* DNI field — requerido para TuPay e Izipay */}
+        {(payment === "tupay" || payment === "izipay") && (
           <div className="mt-5 flex flex-col sm:flex-row gap-3">
             <div className="sm:w-36">
               <label htmlFor="documentType" className="block text-sm mb-1.5 text-dark">
@@ -138,7 +180,7 @@ const PaymentMethod = ({
                 onChange={(e) => onDocumentChange(e.target.value)}
                 placeholder={documentType === "DNI" ? "8 dígitos" : "Número de documento"}
                 className="w-full rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 px-5 py-2.5 outline-none focus:border-transparent focus:ring-2 focus:ring-blue/20"
-                required={payment === "tupay"}
+                required={payment === "tupay" || payment === "izipay"}
               />
             </div>
           </div>
