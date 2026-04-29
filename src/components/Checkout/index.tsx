@@ -213,31 +213,7 @@ const Pagar = () => {
               setLoading(false);
               return;
             }
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: shippingAddress.email,
-          userName: shippingAddress.fullName,
-          orderNumber: orderId,
-          orderDate: new Date().toLocaleDateString(),
-          items: orderItems.map(item => ({
-            name: item.title,
-            quantity: item.quantity,
-            price: item.discountedPrice,
-            image: item.img,
-          })),
-          subtotal: cartTotal,
-          shipping: shippingFee,
-          total: total,
-          shippingAddress,
-        }),
-      });
-
-      if (!emailResponse.ok) {
-        console.error('Failed to send order confirmation email');
-      }
-
-      dispatch(removeAllItemsFromCart());
+        // ...existing code...
       if (user?.uid) {
         try { await deleteUserCart(user.uid); } catch (_) {}
       }
