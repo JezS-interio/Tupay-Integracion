@@ -214,17 +214,6 @@ const Pagar = () => {
               return;
             }
         // ...existing code...
-      if (user?.uid) {
-        try { await deleteUserCart(user.uid); } catch (_) {}
-      }
-      toast.success(`Pedido #${orderId} realizado con éxito. ¡Revisa tu correo!`);
-      router.push('/');
-    } catch (error) {
-      console.error('Pagar error:', error);
-      toast.error('No se pudo procesar el pedido. Intenta de nuevo.');
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
