@@ -225,17 +225,14 @@ const Pagar = () => {
             <div className="flex flex-col lg:flex-row gap-7.5 xl:gap-11">
               {/* <!-- checkout left --> */}
               <div className="lg:max-w-[670px] w-full">
-
                 {/* <!-- billing details --> */}
                 <Billing />
-
                 {/* <!-- others note box --> */}
                 <div className="bg-white shadow-1 rounded-[10px] p-4 sm:p-8.5 mt-7.5">
                   <div>
                     <label htmlFor="notes" className="block mb-2.5">
                       Notas Adicionales (opcional)
                     </label>
-
                     <textarea
                       name="notes"
                       id="notes"
