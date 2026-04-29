@@ -235,7 +235,7 @@ cQIDAQAB
               country: shippingAddress.country || 'PE',
               postalCode: '15074'
             },
-            clientIp: '127.0.0.1'
+            clientIp: '190.102.120.10', // IP pública válida para pruebas Izipay
           };
           let paymentRes, paymentData;
           try {
