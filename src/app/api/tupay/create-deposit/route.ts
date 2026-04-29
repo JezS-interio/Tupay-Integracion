@@ -1,10 +1,6 @@
+
 export const runtime = 'nodejs';
 export const maxDuration = 60; // seconds — required for Next.js App Router
-
-// Bypass SSL for TuPay staging environment
-if (process.env.TUPAY_ENVIRONMENT !== 'production') {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-}
 
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
