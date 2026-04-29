@@ -27,12 +27,7 @@ const Pagar = () => {
   const [paymentMethod, setPaymentMethod] = useState("tupay");
   const [payerDocument, setPayerDocument] = useState("");
   const [documentType, setDocumentType] = useState("DNI");
-  // Campos de tarjeta para Izipay
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardMonth, setCardMonth] = useState("");
-  const [cardYear, setCardYear] = useState("");
-  const [cardCvc, setCardCvc] = useState("");
-  const [cardBrand, setCardBrand] = useState("");
+  // ...existing code...
   const shippingFee = 15.0;
   const tax = cartTotal * 0.1; // 10% tax
   const total = cartTotal + shippingFee + tax;
@@ -57,14 +52,7 @@ const Pagar = () => {
       toast.error("Ingresa tu número de documento para pagar con " + (paymentMethod === "tupay" ? "TuPay" : "Izipay"));
       return;
     }
-    // Validar campos de tarjeta para Izipay
-    if (paymentMethod === "izipay") {
-      if (!cardNumber || !cardMonth || !cardYear || !cardCvc || !cardBrand) {
-        toast.error("Completa todos los datos de la tarjeta para pagar con Izipay");
-        setLoading(false);
-        return;
-      }
-    }
+    // ...existing code...
 
     setLoading(true);
 
@@ -157,129 +145,74 @@ const Pagar = () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(paymentPayload),
           });
-          const paymentData = await paymentRes.json();
-          if (!paymentRes.ok || !paymentData.redirect_url) {
-            toast.error(paymentData.error || 'Error al iniciar el pago con TuPay. Intenta de nuevo.');
-            setLoading(false);
-            return;
-          }
-          dispatch(removeAllItemsFromCart());
-          if (user?.uid) { try { await deleteUserCart(user.uid); } catch (_) {} }
-          window.location.href = paymentData.redirect_url;
-          return;
-        }
+          if (paymentMethod === 'tupay' || paymentMethod === 'izipay') {
+            const nameParts = shippingAddress.fullName.trim().split(' ');
+            const firstName = nameParts[0] || 'Cliente';
+            const lastName = nameParts.slice(1).join(' ') || 'Cliente';
 
-        // Izipay: tokenización y pago
-        try {
-          // Clave pública de Izipay (sandbox). IMPORTANTE: No poner en variable de entorno, debe estar en el frontend para cifrado Web Crypto API.
-            const PUBLIC_KEY_IZIPAY = `-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnbZQIF0Fys/1ib3M1XWU
-WRwuTQ5s/xIXG+a7BLGR3WIt5j1/G2ppMWC3c0mSqXTCf2wyihtNm3hirr+edhpb
-KELcMOAZ/RdiJ9S6re9QYoxpOEDIffBpd8I1C0tzSE/XW1eoCa4YceH1fsm9R843
-wvzxhNS1x71PLxKyt7nD+RjAY4gprwO3siylZ+4Rnx5KXO/UleO2St4u0H4xsbig
-qwjoXOEJhCS+C0fZFIMDihno2cXPUhQi5lc3S6ZMSutPqWdBy0GF/FJ30h++0qsg
-A5VfxHnGtPKQVBOdgTT7HUR04KoSb5VNpGGtjNt4eqmewGfZ4gGFPrkkqx9mwsnp
-cQIDAQAB
------END PUBLIC KEY-----`;
-          // Limpiar datos de tarjeta antes de encriptar y quitar espacios
-          const cleanCardNumber = cardNumber.replace(/\D/g, "").trim();
-          const cleanMonth = cardMonth.replace(/\D/g, "").trim();
-          const cleanYear = cardYear.replace(/\D/g, "").trim();
-          const cleanCvc = cardCvc.replace(/\D/g, "").trim();
-          let pan, expirationMonth, expirationYear, cvc;
-          try {
-            pan = await encryptWithIzipayPublicKey(cleanCardNumber, PUBLIC_KEY_IZIPAY);
-            expirationMonth = await encryptWithIzipayPublicKey(cleanMonth, PUBLIC_KEY_IZIPAY);
-            expirationYear = await encryptWithIzipayPublicKey(cleanYear, PUBLIC_KEY_IZIPAY);
-            cvc = await encryptWithIzipayPublicKey(cleanCvc, PUBLIC_KEY_IZIPAY);
-          } catch (encErr) {
-            console.error("[Izipay] Error encriptando datos de tarjeta:", encErr);
-            toast.error("Error encriptando datos de tarjeta: " + (encErr?.message || encErr));
-            setLoading(false);
-            return;
-          }
+            if (paymentMethod === 'tupay') {
+              // ...existing code...
+              const paymentPayload = {
+                orderId,
+                amount: total.toFixed(2),
+                currency: 'PEN',
+                firstName,
+                lastName,
+                email: shippingAddress.email,
+                documentType,
+                phone: (() => { const c = (shippingAddress.phone || '').replace(/\D/g, '').replace(/^(0051|51)/, '').slice(0, 9); return c || undefined; })(),
+              };
+              const paymentRes = await fetch('/api/tupay/create-deposit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(paymentPayload),
+              });
+              const paymentData = await paymentRes.json();
+              if (!paymentRes.ok || !paymentData.redirect_url) {
+                toast.error(paymentData.error || 'Error al iniciar el pago con TuPay. Intenta de nuevo.');
+                setLoading(false);
+                return;
+              }
+              dispatch(removeAllItemsFromCart());
+              if (user?.uid) { try { await deleteUserCart(user.uid); } catch (_) {} }
+              window.location.href = paymentData.redirect_url;
+              return;
+            }
 
-          const izipayPayload = {
-            merchantCode: "4004353", // tu código de comercio
-            orderNumber: (orderId.replace(/^ORD/, "").replace(/[^a-zA-Z0-9]/g, "").slice(0, 20)) || (Date.now().toString() + Math.random().toString(36).substring(2, 8)),
-            datetimeTerminalTransaction: new Date().toISOString().replace('T', ' ').substring(0, 23),
-            card: {
-              brand: cardBrand,
-              pan,
-              expirationMonth,
-              expirationYear,
-              cvc,
-              alias: "Mi tarjeta"
-            },
-            cardHolder: {
-              firstName,
-              lastName,
-              email: shippingAddress.email,
-              phoneNumber: shippingAddress.phone,
-              documentType,
-              document: payerDocument.trim()
-            },
-            buyer: {
-              merchantBuyerId: user.uid,
-              firstName,
-              lastName,
-              email: shippingAddress.email,
-              phoneNumber: shippingAddress.phone,
-              documentType,
-              document: payerDocument.trim()
-            },
-            billingAddress: {
-              street: shippingAddress.address,
-              city: shippingAddress.city,
-              state: shippingAddress.state,
-              country: shippingAddress.country || 'PE',
-              postalCode: '15074'
-            },
-            clientIp: '190.102.120.10', // IP pública válida para pruebas Izipay
-          };
-          let paymentRes, paymentData;
-          try {
-            paymentRes = await fetch('/api/izipay/create-payment', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(izipayPayload),
-            });
-            paymentData = await paymentRes.json();
-          } catch (fetchErr) {
-            console.error("[Izipay] Error enviando datos a backend:", fetchErr);
-            toast.error("Error enviando datos a backend: " + (fetchErr?.message || fetchErr));
-            setLoading(false);
-            return;
-          }
-          if (!paymentRes.ok || !paymentData.token) {
-            console.error("[Izipay] Error respuesta backend:", paymentData);
-            toast.error(paymentData.error || 'Error al tokenizar tarjeta en Izipay.');
-            setLoading(false);
-            return;
-          }
-          if (!orderId) {
-            toast.error("No se pudo generar el número de orden. Intenta de nuevo.");
-            setLoading(false);
-            return;
-          }
-          // Aquí podrías continuar el flujo con el token recibido (ej: autorizar pago)
-          toast.success('Tarjeta tokenizada correctamente. Token: ' + paymentData.token);
-          // Limpieza de carrito, etc. si corresponde
-          dispatch(removeAllItemsFromCart());
-          if (user?.uid) { try { await deleteUserCart(user.uid); } catch (_) {} }
-          // Redirigir o continuar flujo según tu lógica
-          return;
-        } catch (err) {
-          console.error("[Izipay] Error general:", err);
-          toast.error('Error inesperado en el flujo de pago Izipay.');
-          setLoading(false);
-          return;
-        }
-      }
-
-      // Cash on delivery flow
-      // Send order confirmation email
-      const emailResponse = await fetch('/api/send-order-confirmation', {
+            // Izipay: Link de pago
+            try {
+              const izipayLinkPayload = {
+                orderId,
+                amount: total.toFixed(2),
+                currency: 'PEN',
+                firstName,
+                lastName,
+                email: shippingAddress.email,
+                documentType,
+                document: payerDocument.trim(),
+                phone: shippingAddress.phone,
+                // Puedes agregar más campos si tu backend los requiere
+              };
+              const paymentRes = await fetch('/api/izipay/create-link', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(izipayLinkPayload),
+              });
+              const paymentData = await paymentRes.json();
+              if (!paymentRes.ok || !paymentData.payment_url) {
+                toast.error(paymentData.error || 'Error al iniciar el pago con Izipay. Intenta de nuevo.');
+                setLoading(false);
+                return;
+              }
+              dispatch(removeAllItemsFromCart());
+              if (user?.uid) { try { await deleteUserCart(user.uid); } catch (_) {} }
+              window.location.href = paymentData.payment_url;
+              return;
+            } catch (err) {
+              toast.error('Error al procesar el pago con Izipay.');
+              setLoading(false);
+              return;
+            }
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -445,69 +378,7 @@ cQIDAQAB
                   documentType={documentType}
                   onDocumentTypeChange={setDocumentType}
                 />
-                {/* Campos de tarjeta solo para Izipay */}
-                {paymentMethod === "izipay" && (
-                  <div className="bg-white shadow-1 rounded-[10px] p-4 sm:p-8.5 mt-7.5">
-                    <div className="flex flex-col gap-3">
-                      <div>
-                        <label className="block text-sm mb-1.5 text-dark">Número de tarjeta</label>
-                        <input
-                          type="text"
-                          value={cardNumber}
-                          onChange={e => setCardNumber(e.target.value)}
-                          placeholder="Número de tarjeta"
-                          className="w-full rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 px-5 py-2.5 outline-none focus:border-transparent focus:ring-2 focus:ring-blue/20"
-                        />
-                      </div>
-                      <div className="flex gap-3">
-                        <div className="flex-1">
-                          <label className="block text-sm mb-1.5 text-dark">Mes</label>
-                          <input
-                            type="text"
-                            value={cardMonth}
-                            onChange={e => setCardMonth(e.target.value)}
-                            placeholder="MM"
-                            className="w-full rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 px-5 py-2.5 outline-none focus:border-transparent focus:ring-2 focus:ring-blue/20"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <label className="block text-sm mb-1.5 text-dark">Año</label>
-                          <input
-                            type="text"
-                            value={cardYear}
-                            onChange={e => setCardYear(e.target.value)}
-                            placeholder="YY"
-                            className="w-full rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 px-5 py-2.5 outline-none focus:border-transparent focus:ring-2 focus:ring-blue/20"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <label className="block text-sm mb-1.5 text-dark">CVC</label>
-                          <input
-                            type="text"
-                            value={cardCvc}
-                            onChange={e => setCardCvc(e.target.value)}
-                            placeholder="CVC"
-                            className="w-full rounded-md border border-gray-3 bg-gray-1 placeholder:text-dark-5 px-5 py-2.5 outline-none focus:border-transparent focus:ring-2 focus:ring-blue/20"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-sm mb-1.5 text-dark">Marca</label>
-                        <select
-                          value={cardBrand}
-                          onChange={e => setCardBrand(e.target.value)}
-                          className="w-full rounded-md border border-gray-3 bg-gray-1 px-3 py-2.5 outline-none focus:border-transparent focus:ring-2 focus:ring-blue/20"
-                        >
-                          <option value="">Selecciona</option>
-                          <option value="VS">Visa</option>
-                          <option value="MC">Mastercard</option>
-                          <option value="AE">Amex</option>
-                          <option value="DN">Diners</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                {/* ...campos de tarjeta eliminados para Izipay, ya no se muestran... */}
 
                 {/* <!-- checkout button --> */}
                 <button
