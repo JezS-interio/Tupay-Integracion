@@ -201,7 +201,7 @@ cQIDAQAB
 
           const izipayPayload = {
             merchantCode: "4004353", // tu código de comercio
-            orderNumber: orderId.replace(/[^a-zA-Z0-9]/g, ""), // Solo alfanumérico para Izipay
+            orderNumber: (orderId.replace(/^ORD/, "").replace(/[^a-zA-Z0-9]/g, "").slice(0, 20)) || (Date.now().toString() + Math.random().toString(36).substring(2, 8)),
             datetimeTerminalTransaction: new Date().toISOString().replace('T', ' ').substring(0, 23),
             card: {
               brand: cardBrand,
