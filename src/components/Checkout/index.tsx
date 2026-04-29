@@ -172,15 +172,12 @@ const Pagar = () => {
         // Izipay: tokenización y pago
         try {
           // Clave pública de Izipay (sandbox)
-          const PUBLIC_KEY_IZIPAY = `-----BEGIN PUBLIC KEY-----
-MIIBjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnbZQIF0Fys/1ib3M1XWUWRwuTQ5s/xIXG+a7BLGR3Wlt5j1/G2ppMWC3c0mSqXTCf2wyihtNm3hirr+edhpbKELcMOAZ/RdiJ9S6re9QYoxpOEDlffBpd81IC0tzSE/XW1eoCa4YceH1fsm9R843wvzxhNS1x71PLxKyt7nD+RjAY4grwO3siyJZ+4Rnx5KXO/UleO2St4u0H4xsbiq
-qwjoXOEJhCS+C0fZFIMDihno2cXPUhQi5Lc3S6ZMSutPqWdBy0GF/FJ30h++t0qsgA5VfxHnGtPKQVBOdgTT7HUR04KoSb5VNpGGtjNt4eqmewGfZ4gGFPrkkq9mwspncQIDAQAB
------END PUBLIC KEY-----`;
-          // Limpiar datos de tarjeta antes de encriptar
-          const cleanCardNumber = cardNumber.replace(/\D/g, "");
-          const cleanMonth = cardMonth.replace(/\D/g, "");
-          const cleanYear = cardYear.replace(/\D/g, "");
-          const cleanCvc = cardCvc.replace(/\D/g, "");
+          const PUBLIC_KEY_IZIPAY = `-----BEGIN PUBLIC KEY-----\nMIIBjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnbZQIF0Fys/1ib3M1XWUWRwuTQ5s/xIXG+a7BLGR3Wlt5j1/G2ppMWC3c0mSqXTCf2wyihtNm3hirr+edhpbKELcMOAZ/RdiJ9S6re9QYoxpOEDlffBpd81IC0tzSE/XW1eoCa4YceH1fsm9R843wvzxhNS1x71PLxKyt7nD+RjAY4grwO3siyJZ+4Rnx5KXO/UleO2St4u0H4xsbiq\nqwjoXOEJhCS+C0fZFIMDihno2cXPUhQi5Lc3S6ZMSutPqWdBy0GF/FJ30h++t0qsgA5VfxHnGtPKQVBOdgTT7HUR04KoSb5VNpGGtjNt4eqmewGfZ4gGFPrkkq9mwspncQIDAQAB\n-----END PUBLIC KEY-----`;
+          // Limpiar datos de tarjeta antes de encriptar y quitar espacios
+          const cleanCardNumber = cardNumber.replace(/\D/g, "").trim();
+          const cleanMonth = cardMonth.replace(/\D/g, "").trim();
+          const cleanYear = cardYear.replace(/\D/g, "").trim();
+          const cleanCvc = cardCvc.replace(/\D/g, "").trim();
           let pan, expirationMonth, expirationYear, cvc;
           try {
             pan = await encryptWithIzipayPublicKey(cleanCardNumber, PUBLIC_KEY_IZIPAY);

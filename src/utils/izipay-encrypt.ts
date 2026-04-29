@@ -9,14 +9,17 @@
  */
 export async function encryptWithIzipayPublicKey(value: string, publicKey: string): Promise<string> {
   try {
-    // Web Crypto API solo acepta claves en formato spki, así que convertimos el PEM
+    // Limpiar el PEM: quitar encabezado, pie y espacios
     const pemHeader = "-----BEGIN PUBLIC KEY-----";
     const pemFooter = "-----END PUBLIC KEY-----";
-    const pemContents = publicKey.replace(pemHeader, "").replace(pemFooter, "").replace(/\s+/g, "");
-    if (!pemContents || pemContents.length < 50) {
+    let pem = publicKey.trim();
+    if (pem.startsWith(pemHeader)) pem = pem.slice(pemHeader.length);
+    if (pem.endsWith(pemFooter)) pem = pem.slice(0, pem.length - pemFooter.length);
+    pem = pem.replace(/\r?\n/g, "").replace(/\s+/g, "");
+    if (!pem || pem.length < 50) {
       throw new Error("Clave pública inválida o vacía");
     }
-    const binaryDerString = atob(pemContents);
+    const binaryDerString = atob(pem);
     const binaryDer = new Uint8Array(binaryDerString.length);
     for (let i = 0; i < binaryDerString.length; i++) {
       binaryDer[i] = binaryDerString.charCodeAt(i);
