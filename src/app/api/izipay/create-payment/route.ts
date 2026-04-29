@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const IZIPAY_API_KEY = process.env.IZIPAY_API_KEY!;
 // Usar siempre el endpoint sandbox para pruebas
-const IZIPAY_TOKENIZATION_URL = "https://sandbox-api-pw.izipay.pe/gateway/api/v1/proxy-cors/https://sandbox-api-pw.izipay.pe/tokenization/external/api/v1/tokens";
+const IZIPAY_TOKENIZATION_URL = "https://sandbox-api-pw.izipay.pe/tokenization/external/api/v1/tokens";
 
 export async function POST(request: NextRequest) {
   try {
