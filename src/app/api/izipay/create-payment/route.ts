@@ -52,22 +52,12 @@ export async function POST(request: NextRequest) {
     };
 
     // Llamada a la API de Izipay (ejemplo: crear link de pago)
-    // Construir header de autenticación según si hay secret o no
-    let authHeader: string;
-    if (IZIPAY_API_SECRET && IZIPAY_API_SECRET.length > 0) {
-      // Autenticación Basic con key:secret
-      authHeader = `Basic ${Buffer.from(`${IZIPAY_API_KEY}:${IZIPAY_API_SECRET}`).toString("base64")}`;
-    } else {
-      // Si no hay secret, usar solo la API Key (Bearer o custom, según doc de Izipay)
-      // Aquí se usa Bearer por defecto, ajusta si la doc indica otro esquema
-      authHeader = `Bearer ${IZIPAY_API_KEY}`;
-    }
-
+    // Siempre usar Bearer con la API Key de Izipay
     const izipayRes = await fetch(`${IZIPAY_BASE_URL}/api-payment/V4/Charge/CreatePayment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": authHeader,
+        "Authorization": `Bearer ${IZIPAY_API_KEY}`,
       },
       body: JSON.stringify(paymentPayload),
     });
