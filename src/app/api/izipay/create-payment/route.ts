@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${IZIPAY_API_KEY}`,
+        "Authorization": IZIPAY_API_KEY,
       },
       body: JSON.stringify(paymentPayload),
     });
