@@ -47,6 +47,7 @@ export async function encryptWithIzipayPublicKey(value: string, publicKey: strin
     console.error("[Izipay Encrypt] Error encriptando:", err);
     throw err;
   }
+}
     // Limpiar el PEM: quitar encabezado, pie, espacios y líneas vacías
     const pemHeader = "-----BEGIN PUBLIC KEY-----";
     const pemFooter = "-----END PUBLIC KEY-----";
