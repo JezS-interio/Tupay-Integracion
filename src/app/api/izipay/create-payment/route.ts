@@ -27,6 +27,9 @@ export async function POST(request: NextRequest) {
     // transactionId único por transacción
     const transactionId = body.transactionId || `${Date.now()}${Math.floor(Math.random() * 1000)}`;
 
+    // LOG: Mostrar el payload recibido
+    console.log('[Izipay] Payload recibido:', JSON.stringify(body, null, 2));
+
     const izipayRes = await fetch(IZIPAY_TOKENIZATION_URL, {
       method: "POST",
       headers: {
@@ -42,6 +45,9 @@ export async function POST(request: NextRequest) {
     });
 
     const izipayData = await izipayRes.json();
+
+    // LOG: Mostrar respuesta completa de Izipay
+    console.log('[Izipay] Respuesta completa:', JSON.stringify(izipayData, null, 2));
 
     if (!izipayRes.ok || izipayData.code !== "00") {
       return NextResponse.json({ error: izipayData.message || "Error al tokenizar tarjeta en Izipay", details: izipayData }, { status: 400 });
