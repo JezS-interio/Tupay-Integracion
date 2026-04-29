@@ -173,9 +173,14 @@ const Pagar = () => {
         try {
           // Clave pública de Izipay (sandbox). IMPORTANTE: No poner en variable de entorno, debe estar en el frontend para cifrado Web Crypto API.
             const PUBLIC_KEY_IZIPAY = `-----BEGIN PUBLIC KEY-----
-  MIIBjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnbZQIF0Fys/1ib3M1XWUWRwuTQ5s/xIXG+a7BLGR3Wlt5j1/G2ppMWC3c0mSqXTCf2wyihtNm3hirr+edhpbKELcMOAZ/RdiJ9S6re9QYoxpOEDlffBpd81IC0tzSE/XW1eoCa4YceH1fsm9R843wvzxhNS1x71PLxKyt7nD+RjAY4grwO3siyJZ+4Rnx5KXO/UleO2St4u0H4xsbiq
-  qwjoXOEJhCS+C0fZFIMDihno2cXPUhQi5Lc3S6ZMSutPqWdBy0GF/FJ30h++t0qsgA5VfxHnGtPKQVBOdgTT7HUR04KoSb5VNpGGtjNt4eqmewGfZ4gGFPrkkq9mwspncQIDAQAB
-  -----END PUBLIC KEY-----`;
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnbZQIF0Fys/1ib3M1XWU
+WRwuTQ5s/xIXG+a7BLGR3WIt5j1/G2ppMWC3c0mSqXTCf2wyihtNm3hirr+edhpb
+KELcMOAZ/RdiJ9S6re9QYoxpOEDIffBpd8I1C0tzSE/XW1eoCa4YceH1fsm9R843
+wvzxhNS1x71PLxKyt7nD+RjAY4gprwO3siylZ+4Rnx5KXO/UleO2St4u0H4xsbig
+qwjoXOEJhCS+C0fZFIMDihno2cXPUhQi5lc3S6ZMSutPqWdBy0GF/FJ30h++0qsg
+A5VfxHnGtPKQVBOdgTT7HUR04KoSb5VNpGGtjNt4eqmewGfZ4gGFPrkkqx9mwsnp
+cQIDAQAB
+-----END PUBLIC KEY-----`;
           // Limpiar datos de tarjeta antes de encriptar y quitar espacios
           const cleanCardNumber = cardNumber.replace(/\D/g, "").trim();
           const cleanMonth = cardMonth.replace(/\D/g, "").trim();
