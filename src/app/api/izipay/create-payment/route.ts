@@ -1,75 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// TODO: Reemplaza estos valores con los de producción o usa variables de entorno
 const IZIPAY_API_KEY = process.env.IZIPAY_API_KEY!;
-const IZIPAY_API_SECRET = process.env.IZIPAY_API_SECRET!;
-const IZIPAY_BASE_URL = process.env.IZIPAY_BASE_URL || "https://api.micuentaweb.pe";
+const IZIPAY_TOKENIZATION_URL = "https://sandbox-api-pw.izipay.pe/gateway/api/v1/proxy-cors/https://sandbox-api-pw.izipay.pe/tokenization/external/api/v1/tokens";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const {
-      orderId,
-      amount,
-      currency = "PEN",
-      firstName,
-      lastName,
-      email,
-      document,
-      documentType = "DNI",
-      phone,
-    } = body;
-
-    // Validación básica
-    if (!orderId || !amount || !firstName || !lastName || !email || !document) {
-      const missing = { orderId: !orderId, amount: !amount, firstName: !firstName, lastName: !lastName, email: !email, document: !document };
-      return NextResponse.json({ error: "Missing required fields", missing }, { status: 400 });
+    // Validación básica de campos requeridos
+    const requiredFields = [
+      "merchantCode",
+      "orderNumber",
+      "datetimeTerminalTransaction",
+      "card",
+      "cardHolder",
+      "buyer",
+      "billingAddress",
+      "clientIp"
+    ];
+    for (const field of requiredFields) {
+      if (!body[field]) {
+        return NextResponse.json({ error: `Missing required field: ${field}` }, { status: 400 });
+      }
     }
 
-    // Construir el payload según la documentación de Izipay
-    const paymentPayload = {
-      amount: {
-        currency,
-        total: Number(amount),
-      },
-      orderId,
-      customer: {
-        firstName,
-        lastName,
-        email,
-        document,
-        documentType,
-        phone,
-      },
-      // Agrega aquí otros campos requeridos por Izipay
-      // ...
-      // URLs de retorno (ajusta según tu frontend)
-      redirectUrls: {
-        success: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success?order=${orderId}`,
-        error: `${process.env.NEXT_PUBLIC_APP_URL}/payment/error?order=${orderId}`,
-        cancel: `${process.env.NEXT_PUBLIC_APP_URL}/checkout`,
-      },
-    };
+    // transactionId único por transacción
+    const transactionId = body.transactionId || `${Date.now()}${Math.floor(Math.random() * 1000)}`;
 
-    // Llamada a la API de Izipay (ejemplo: crear link de pago)
-    // Siempre usar Bearer con la API Key de Izipay
-    const izipayRes = await fetch(`${IZIPAY_BASE_URL}/api-payment/V4/Charge/CreatePayment`, {
+    const izipayRes = await fetch(IZIPAY_TOKENIZATION_URL, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Accept": "application/json",
         "Authorization": IZIPAY_API_KEY,
+        "Content-Type": "application/json",
+        "transactionId": transactionId,
       },
-      body: JSON.stringify(paymentPayload),
+      body: JSON.stringify({
+        ...body,
+        transactionId,
+      }),
     });
 
     const izipayData = await izipayRes.json();
 
-    if (!izipayRes.ok || !izipayData.redirectUrl) {
-      return NextResponse.json({ error: izipayData.errorMessage || "Error al crear el pago en Izipay", details: izipayData }, { status: 400 });
+    if (!izipayRes.ok || izipayData.code !== "00") {
+      return NextResponse.json({ error: izipayData.message || "Error al tokenizar tarjeta en Izipay", details: izipayData }, { status: 400 });
     }
 
-    // Devolver la URL de pago para redirigir al usuario
-    return NextResponse.json({ redirect_url: izipayData.redirectUrl });
+    // Devolver el token generado
+    return NextResponse.json({ token: izipayData.response?.token?.token, izipayData });
   } catch (error) {
     return NextResponse.json({ error: "Error interno en el servidor", details: error }, { status: 500 });
   }
