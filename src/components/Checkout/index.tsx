@@ -257,6 +257,11 @@ cQIDAQAB
             setLoading(false);
             return;
           }
+          if (!orderId) {
+            toast.error("No se pudo generar el número de orden. Intenta de nuevo.");
+            setLoading(false);
+            return;
+          }
           // Aquí podrías continuar el flujo con el token recibido (ej: autorizar pago)
           toast.success('Tarjeta tokenizada correctamente. Token: ' + paymentData.token);
           // Limpieza de carrito, etc. si corresponde
