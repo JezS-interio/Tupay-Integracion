@@ -17,15 +17,56 @@ export async function POST(request: NextRequest) {
     // LOG: Payload recibido
     console.log('[IZIPAY] Payload recibido en /api/izipay/create-link:', JSON.stringify(body, null, 2));
 
-    // Forzar formato correcto de urlIpn
-    let fixedBody = { ...body };
-    if (fixedBody.urlIpn && typeof fixedBody.urlIpn === 'string' && !fixedBody.urlIpn.startsWith('https://')) {
-      fixedBody.urlIpn = 'https://' + fixedBody.urlIpn.replace(/^https?:\/\//, '');
-    }
+
+    // Construir el payload correcto para Izipay
+    // Espera recibir del frontend: orderId, amount, currency, firstName, lastName, email, documentType, document, phone, address, city, state, country
+    // Opcional: productDescription, expirationDate, etc.
+    const now = new Date();
+    const defaultExpiration = new Date(now.getTime() + 24 * 60 * 60 * 1000); // +1 día
+    const expirationDate = body.expirationDate || `${defaultExpiration.getFullYear()}-${(defaultExpiration.getMonth()+1).toString().padStart(2,'0')}-${defaultExpiration.getDate().toString().padStart(2,'0')} 23:59:00.000`;
 
     const payload = {
       merchantCode: IZIPAY_MERCHANT_CODE,
-      ...fixedBody
+      productDescription: body.productDescription || `Pago pedido ${body.orderId || ''}`,
+      amount: body.amount,
+      currency: body.currency || 'PEN',
+      expirationDate,
+      wayOfUse: body.wayOfUse || 'INDIVIDUAL',
+      email_Notification: body.email || '',
+      payMethod: body.payMethod || 'CARD',
+      referenceCode: body.orderId || body.referenceCode || '',
+      languageUsed: body.languageUsed || 'ESP',
+      urL_Terms_and_Conditions: body.urL_Terms_and_Conditions || 'https://www.izipay.pe/pdf/terminos-y-condiciones-formulario-pago',
+      urlIpn: (body.urlIpn && typeof body.urlIpn === 'string' && !body.urlIpn.startsWith('https://'))
+        ? 'https://' + body.urlIpn.replace(/^https?:\/\//, '')
+        : (body.urlIpn || 'https://www.tu-web.com/notificaciones/'),
+      billing: {
+        firstName: body.firstName,
+        lastName: body.lastName,
+        email: body.email,
+        phoneNumber: body.phone,
+        street: body.address || '',
+        postalCode: body.postalCode || '15074',
+        city: body.city || '',
+        state: body.state || '',
+        country: body.country || 'PE',
+        documentType: body.documentType,
+        document: body.document
+      },
+      shipping: {
+        firstName: body.firstName,
+        lastName: body.lastName,
+        email: body.email,
+        phoneNumber: body.phone,
+        street: body.address || '',
+        postalCode: body.postalCode || '15074',
+        city: body.city || '',
+        state: body.state || '',
+        country: body.country || 'PE',
+        documentType: body.documentType,
+        document: body.document
+      },
+      customFields: Array.isArray(body.customFields) ? body.customFields : []
     };
 
     // LOG: Payload enviado a Izipay
