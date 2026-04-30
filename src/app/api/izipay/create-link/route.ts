@@ -17,9 +17,15 @@ export async function POST(request: NextRequest) {
     // LOG: Payload recibido
     console.log('[IZIPAY] Payload recibido en /api/izipay/create-link:', JSON.stringify(body, null, 2));
 
+    // Forzar formato correcto de urlIpn
+    let fixedBody = { ...body };
+    if (fixedBody.urlIpn && typeof fixedBody.urlIpn === 'string' && !fixedBody.urlIpn.startsWith('https://')) {
+      fixedBody.urlIpn = 'https://' + fixedBody.urlIpn.replace(/^https?:\/\//, '');
+    }
+
     const payload = {
       merchantCode: IZIPAY_MERCHANT_CODE,
-      ...body
+      ...fixedBody
     };
 
     // LOG: Payload enviado a Izipay
@@ -41,7 +47,8 @@ export async function POST(request: NextRequest) {
 
     if (!linkRes.ok || !linkData.response?.urL_PaymentLink) {
       console.error('[IZIPAY] Error al generar link de pago:', linkData);
-      return NextResponse.json({ error: "No se pudo generar link de pago Izipay", details: linkData }, { status: 500 });
+      // Loguear el mensaje de error de Izipay si existe
+      return NextResponse.json({ error: linkData.message || "No se pudo generar link de pago Izipay", details: linkData }, { status: 500 });
     }
     return NextResponse.json({ paymentLink: linkData.response.urL_PaymentLink, linkData });
   } catch (err) {
