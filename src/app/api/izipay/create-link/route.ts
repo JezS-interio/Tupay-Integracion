@@ -46,9 +46,12 @@ export async function POST(request: NextRequest) {
     console.log('[IZIPAY] Respuesta de Izipay:', JSON.stringify(linkData, null, 2));
 
     if (!linkRes.ok || !linkData.response?.urL_PaymentLink) {
-      console.error('[IZIPAY] Error al generar link de pago:', linkData);
-      // Loguear el mensaje de error de Izipay si existe
-      return NextResponse.json({ error: linkData.message || "No se pudo generar link de pago Izipay", details: linkData }, { status: 500 });
+      // Devolver el error de Izipay directamente al frontend para depuración
+      return NextResponse.json({
+        error: linkData.message || "No se pudo generar link de pago Izipay",
+        izipayError: linkData,
+        payloadEnviado: payload
+      }, { status: 500 });
     }
     return NextResponse.json({ paymentLink: linkData.response.urL_PaymentLink, linkData });
   } catch (err) {
